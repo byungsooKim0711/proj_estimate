@@ -11,13 +11,13 @@ import org.apache.ibatis.annotations.Param;
 @Mapper
 public interface PriceMapper {
 
-    public List<Price> selectPrices(@Param("search") String search);
+    public List<Price> selectPrices(@Param("search") String search) throws Exception;
 
-    public Optional<Price> findPriceById(int priceId);
+    public Optional<Price> findPriceById(int priceId) throws Exception;
 
-    public int insertPrice(Price price);
+    public int insertPrice(Price price) throws Exception;
 
-    public int deletePrice(int price);
+    public int deletePrice(int price) throws Exception;
 
-    public int updatePrice(Price price);
+    public int updatePrice(Price price) throws Exception;
 }

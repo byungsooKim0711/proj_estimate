@@ -28,12 +28,12 @@ public class ToolController {
     private ToolService toolService;
 
     @GetMapping("/tool")
-    public List<Tool> getTools(@RequestParam(name = "search", required = false) String search) {
+    public List<Tool> getTools(@RequestParam(name = "search", required = false) String search) throws Exception {
         return toolService.selectTools(search);
     }
 
     @PostMapping("/tool")
-    public ResponseEntity<Tool> insertTool(@RequestBody final Tool tool, final UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Tool> insertTool(@RequestBody final Tool tool, final UriComponentsBuilder uriBuilder) throws Exception {
         toolService.insertTool(tool);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -43,7 +43,7 @@ public class ToolController {
     }
 
     @DeleteMapping("/tool/{toolId}")
-    public ResponseEntity<Void> deleteTool(@PathVariable(name = "toolId") int toolId) {
+    public ResponseEntity<Void> deleteTool(@PathVariable(name = "toolId") int toolId) throws Exception {
         Tool deleted = toolService.findToolById(toolId);
 
         toolService.deleteTool(deleted.getToolId());
@@ -52,7 +52,7 @@ public class ToolController {
     }
 
     @PutMapping("/tool/{toolId}")
-    public ResponseEntity<Tool> updateTool(@PathVariable(name = "toolId") int toolId, @RequestBody final Tool tool) {
+    public ResponseEntity<Tool> updateTool(@PathVariable(name = "toolId") int toolId, @RequestBody final Tool tool) throws Exception {
         Tool updated = toolService.findToolById(toolId);
 
         tool.setToolId(updated.getToolId());

@@ -28,12 +28,12 @@ public class PriceController {
     private PriceService priceService;
 
     @GetMapping("/price")
-    public List<Price> getPrices(@RequestParam(name = "search", required = false) String search) {
+    public List<Price> getPrices(@RequestParam(name = "search", required = false) String search) throws Exception {
         return priceService.selectPrices(search);
     }
 
     @PostMapping("/price")
-    public ResponseEntity<Price> insertPrice(@RequestBody final Price price, final UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Price> insertPrice(@RequestBody final Price price, final UriComponentsBuilder uriBuilder) throws Exception {
         priceService.insertPrice(price);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -43,7 +43,7 @@ public class PriceController {
     }
 
     @DeleteMapping("/price/{priceId}")
-    public ResponseEntity<Void> deletePrice(@PathVariable(name = "priceId") int priceId) {
+    public ResponseEntity<Void> deletePrice(@PathVariable(name = "priceId") int priceId) throws Exception {
         Price deleted = priceService.findPriceById(priceId);
         
         priceService.deletePrice(deleted.getPriceId());
@@ -52,7 +52,7 @@ public class PriceController {
     }
 
     @PutMapping("/price/{priceId}")
-    public ResponseEntity<Price> updatePrice(@PathVariable(name = "priceId") int priceId, @RequestBody final Price price) {
+    public ResponseEntity<Price> updatePrice(@PathVariable(name = "priceId") int priceId, @RequestBody final Price price) throws Exception {
         Price updated = priceService.findPriceById(priceId);
 
         price.setPriceId(updated.getPriceId());

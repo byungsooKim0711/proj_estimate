@@ -15,7 +15,7 @@ public class VenderService {
     @Autowired
     private VenderMapper venderMapper;
 
-    public List<Vender> selectVenders(String search) {
+    public List<Vender> selectVenders(String search) throws Exception {
         return venderMapper.selectVenders(search);
     }
 
@@ -24,20 +24,20 @@ public class VenderService {
      * @return Vender
      * @throws ResourceNotFoundException
       */
-    public Vender findVenderById(int venderId) {
+    public Vender findVenderById(int venderId) throws Exception {
         return venderMapper.findVenderById(venderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
-    public Vender insertVender(Vender vender) {
+    public Vender insertVender(Vender vender) throws Exception {
         venderMapper.insertVender(vender);
         return vender;
     }
 
-    public int deleteVender(int venderId) {
+    public int deleteVender(int venderId) throws Exception {
         return venderMapper.deleteVender(venderId);
     }
 
-    public int updateVender(Vender vender) {
+    public int updateVender(Vender vender) throws Exception {
         return venderMapper.updateVender(vender);
     }
     

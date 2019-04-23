@@ -15,7 +15,7 @@ public class PriceService {
     @Autowired
     private PriceMapper priceMapper;
 
-    public List<Price> selectPrices(String search) {
+    public List<Price> selectPrices(String search) throws Exception {
         return priceMapper.selectPrices(search);
     }
 
@@ -25,20 +25,20 @@ public class PriceService {
      * @return Price
      * @throws ResourceNotFoundException
       */
-    public Price findPriceById(int priceId) {
+    public Price findPriceById(int priceId) throws Exception {
         return priceMapper.findPriceById(priceId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
-    public Price insertPrice(Price price) {
+    public Price insertPrice(Price price) throws Exception {
         priceMapper.insertPrice(price);
         return price;
     }
 
-    public int deletePrice(int priceId) {
+    public int deletePrice(int priceId) throws Exception {
         return priceMapper.deletePrice(priceId);
     }
 
-    public int updatePrice(Price price) {
+    public int updatePrice(Price price) throws Exception {
         return priceMapper.updatePrice(price);
     } 
 }

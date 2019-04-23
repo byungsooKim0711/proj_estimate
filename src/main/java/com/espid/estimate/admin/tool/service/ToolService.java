@@ -15,7 +15,7 @@ public class ToolService {
     @Autowired
     private ToolMapper toolMapper;
 
-    public List<Tool> selectTools(String search) {
+    public List<Tool> selectTools(String search) throws Exception {
         return toolMapper.selectTools(search);
     }
 
@@ -25,20 +25,20 @@ public class ToolService {
      * @return Tool
      * @throws ResourceNotFoundException
       */
-    public Tool findToolById(int toolId) {
+    public Tool findToolById(int toolId) throws Exception {
         return toolMapper.findToolById(toolId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
-    public Tool insertTool(Tool tool) {
+    public Tool insertTool(Tool tool) throws Exception {
         toolMapper.insertTool(tool);
         return tool;
     }
 
-    public int deleteTool(int toolId) {
+    public int deleteTool(int toolId) throws Exception {
         return toolMapper.deleteTool(toolId);
     }
 
-    public int updateTool(Tool tool) {
+    public int updateTool(Tool tool) throws Exception {
         return toolMapper.updateTool(tool);
     }
 }

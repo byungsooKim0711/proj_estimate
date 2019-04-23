@@ -28,13 +28,13 @@ public class VenderController {
     private VenderService venderService;
 
     @GetMapping("/vender")
-    public List<Vender> getVenders(@RequestParam(name = "search", required = false) String search) {
+    public List<Vender> getVenders(@RequestParam(name = "search", required = false) String search) throws Exception {
         return venderService.selectVenders(search);
 
     }
 
     @PostMapping("/vender")
-    public ResponseEntity<Vender> insertVender(@RequestBody final Vender vender, final UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Vender> insertVender(@RequestBody final Vender vender, final UriComponentsBuilder uriBuilder) throws Exception {
         venderService.insertVender(vender);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -44,7 +44,7 @@ public class VenderController {
     }
 
     @DeleteMapping("/vender/{venderId}")
-    public ResponseEntity<?> deleteVender(@PathVariable(name = "venderId") int venderId) {
+    public ResponseEntity<?> deleteVender(@PathVariable(name = "venderId") int venderId) throws Exception {
         Vender deleted = venderService.findVenderById(venderId);
 
         venderService.deleteVender(deleted.getVenderId());
@@ -53,7 +53,7 @@ public class VenderController {
     }
 
     @PutMapping("/vender/{venderId}")
-    public ResponseEntity<Vender> updateVender(@PathVariable(name = "venderId") int venderId, @RequestBody final Vender vender) {
+    public ResponseEntity<Vender> updateVender(@PathVariable(name = "venderId") int venderId, @RequestBody final Vender vender) throws Exception {
         Vender updated = venderService.findVenderById(venderId);
 
         vender.setVenderId(updated.getVenderId());

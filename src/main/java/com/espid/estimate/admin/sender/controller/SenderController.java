@@ -28,12 +28,12 @@ public class SenderController {
     private SenderService senderService;
 
     @GetMapping("/sender")
-    public List<Sender> getSender(@RequestParam(name = "search", required = false) String search) {
+    public List<Sender> getSender(@RequestParam(name = "search", required = false) String search) throws Exception {
         return senderService.selectSenders(search);
     }
 
     @PostMapping("/sender")
-    public ResponseEntity<Sender> insertSender(@RequestBody final Sender sender, final UriComponentsBuilder uriBuilder) {
+    public ResponseEntity<Sender> insertSender(@RequestBody final Sender sender, final UriComponentsBuilder uriBuilder) throws Exception {
         senderService.insertSender(sender);
 
         final HttpHeaders headers = new HttpHeaders();
@@ -43,7 +43,7 @@ public class SenderController {
     }
 
     @DeleteMapping("/sender/{senderId}")
-    public ResponseEntity<?> deleteSender(@PathVariable(name = "senderId") int senderId) {
+    public ResponseEntity<?> deleteSender(@PathVariable(name = "senderId") int senderId) throws Exception {
         Sender deleted = senderService.findSenderById(senderId);
 
         senderService.deleteSender(deleted.getSpidId());
@@ -52,7 +52,7 @@ public class SenderController {
     }
 
     @PutMapping("/sender/{senderId}")
-    public ResponseEntity<Sender> updateSender(@PathVariable(name = "senderId") int senderId, @RequestBody final Sender sender) {
+    public ResponseEntity<Sender> updateSender(@PathVariable(name = "senderId") int senderId, @RequestBody final Sender sender) throws Exception {
         Sender updated = senderService.findSenderById(senderId);
 
         sender.setSpidId(updated.getSpidId());

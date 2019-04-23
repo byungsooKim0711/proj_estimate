@@ -15,7 +15,7 @@ public class SenderService {
     @Autowired
     private SenderMapper senderMapper;
 
-    public List<Sender> selectSenders(String search) {
+    public List<Sender> selectSenders(String search) throws Exception {
         return senderMapper.selectSenders(search);
     }
     
@@ -24,20 +24,20 @@ public class SenderService {
      * @return Sender
      * @throws ResourceNotFoundException
       */
-    public Sender findSenderById(int senderId) {
+    public Sender findSenderById(int senderId) throws Exception {
         return senderMapper.findSenderById(senderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
 
-    public Sender insertSender(Sender sender) {
+    public Sender insertSender(Sender sender) throws Exception {
         senderMapper.insertSender(sender);
         return sender;
     }
 
-    public int deleteSender(int senderId) {
+    public int deleteSender(int senderId) throws Exception {
         return senderMapper.deleteSender(senderId);
     }
 
-    public int updateSender(Sender sender) {
+    public int updateSender(Sender sender) throws Exception {
         return senderMapper.updateSender(sender);
     }
 }

@@ -10,13 +10,13 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface ToolMapper {
-    public List<Tool> selectTools(@Param("search") String search);
+    public List<Tool> selectTools(@Param("search") String search) throws Exception;
 
-    public Optional<Tool> findToolById(int toolId);
+    public Optional<Tool> findToolById(int toolId) throws Exception;
 
-    public int insertTool(Tool tool);
+    public int insertTool(Tool tool) throws Exception;
 
-    public int deleteTool(int toolId);
+    public int deleteTool(int toolId) throws Exception;
 
-    public int updateTool(Tool tool);
+    public int updateTool(Tool tool) throws Exception;
 }

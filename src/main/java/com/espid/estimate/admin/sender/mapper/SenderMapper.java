@@ -10,13 +10,13 @@ import org.apache.ibatis.annotations.Param;
 
 @Mapper
 public interface SenderMapper {
-    public List<Sender> selectSenders(@Param("search") String search);
+    public List<Sender> selectSenders(@Param("search") String search) throws Exception;
 
-    public Optional<Sender> findSenderById(int senderId);
+    public Optional<Sender> findSenderById(int senderId) throws Exception;
     
-    public int insertSender(Sender sender);
+    public int insertSender(Sender sender) throws Exception;
 
-    public int deleteSender(int senderId);
+    public int deleteSender(int senderId) throws Exception;
 
-    public int updateSender(Sender sender);
+    public int updateSender(Sender sender) throws Exception;
 }
