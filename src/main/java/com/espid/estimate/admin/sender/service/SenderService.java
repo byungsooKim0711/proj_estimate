@@ -19,6 +19,11 @@ public class SenderService {
         return senderMapper.selectSenders(search);
     }
     
+    /**
+     * @param senderId
+     * @return Sender
+     * @throws ResourceNotFoundException
+      */
     public Sender findSenderById(int senderId) {
         return senderMapper.findSenderById(senderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }

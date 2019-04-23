@@ -19,6 +19,11 @@ public class VenderService {
         return venderMapper.selectVenders(search);
     }
 
+    /**
+     * @param venderId
+     * @return Vender
+     * @throws ResourceNotFoundException
+      */
     public Vender findVenderById(int venderId) {
         return venderMapper.findVenderById(venderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
     }
