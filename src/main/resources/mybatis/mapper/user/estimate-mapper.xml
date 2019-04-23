@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.user.mapper.UserSenderMapper">
+
+    <!-- OLD -->
+    <!-- <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
+        <result property="toolId" column="tool_id"/>
+        <result property="toolName" column="tool_name"/>
+        <result property="toolModelNumber" column="tool_model_number"/>
+        <result property="toolLicense" column="tool_license"/>
+        <result property="venderId" column="vender_id"/>
+        <result property="toolDetails" column="tool_details"/>
+        <collection property="priceList" column="tool_id" javaType="java.util.ArrayList" ofType="com.espid.estimate.user.model.PriceModel" select="getPriceListByToolId"/>
+    </resultMap> -->
+
+    <!-- NEW 2019-04-22 -->
+    <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
+        <result property="toolId" column="tool_id"/>
+        <result property="toolName" column="tool_name"/>
+        <result property="toolModelNumber" column="tool_model_number"/>
+        <result property="toolLicense" column="tool_license"/>
+        <result property="venderId" column="vender_id"/>
+        <result property="toolDetails" column="tool_details"/>
+        <collection property="priceList" javaType="java.util.ArrayList" ofType="com.espid.estimate.user.model.PriceModel">
+            <id property="priceId" column="price_id"/>
+            <result property="eur" column="eur"/>
+            <result property="exchangeRate" column="exchange_rate"/>
+            <result property="krw" column="krw"/>
+            <result property="toolId" column="tool_id"/>
+            <result property="quantity" column="quantity"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSenderByName" resultType="com.espid.estimate.user.model.SenderModel">
+        SELECT 
+              spid_id
+            , spid_dept
+            , spid_name
+            , spid_tel1
+            , spid_tel2
+            , spid_email
+            , job
+        FROM
+            sender
+        WHERE
+            spid_name = #{senderName}
+    </select>
+
+    <select id="selectVenderBySenderId" resultType="com.espid.estimate.user.model.VenderModel">
+        SELECT
+              vender_id
+            , vender_name
+            , spid_id
+        FROM
+            vender
+        WHERE 
+            spid_id = #{senderId}
+    </select>
+
+    <!-- OLD -->
+    <!-- <select id="getToolListByVenderId" resultMap="toolResultMap">
+        SELECT
+              tool_id
+            , tool_name
+            , tool_model_number
+            , tool_license
+            , tool_details
+            , vender_id
+        FROM
+            tool
+        WHERE 
+            vender_id = #{venderId}
+    </select> -->
+
+    <!-- NEW 2019-04-22 -->
+    <select id="getToolListByVenderId" resultMap="toolResultMap">
+        SELECT
+              tool.tool_id
+            , tool_name
+            , tool_model_number
+            , tool_license
+            , tool_details
+            , vender_id
+            , price_id
+            , eur
+            , exchange_rate
+            , krw
+            , quantity
+        FROM
+            tool LEFT OUTER JOIN price ON tool.tool_id = price.tool_id
+        WHERE 
+            vender_id = #{venderId}
+    </select>
+
+    <select id="getPriceListByToolId" resultType="com.espid.estimate.user.model.PriceModel">
+        SELECT
+              price_id
+            , eur
+            , exchange_rate
+            , krw
+            , tool_id
+            , quantity
+        FROM
+            price
+        WHERE
+            tool_id = #{toolId}
+        ORDER BY
+            quantity ASC
+    </select>
+</mapper>

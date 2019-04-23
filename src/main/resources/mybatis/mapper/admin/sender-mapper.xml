@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.admin.sender.mapper.SenderMapper">
+    <select id="selectSenders" resultType="com.espid.estimate.admin.sender.model.Sender">
+        SELECT
+              spid_id
+            , spid_dept
+            , spid_name
+            , spid_tel1
+            , spid_tel2
+            , spid_email
+            , job
+        FROM
+            sender
+
+        <if test="search != null">
+        WHERE
+            spid_name LIKE CONCAT('%', #{search}, '%')
+        </if>
+    </select>
+
+    <select id="findSenderById" resultType="com.espid.estimate.admin.sender.model.Sender">
+        SELECT
+              spid_id
+            , spid_dept
+            , spid_name
+            , spid_tel1
+            , spid_tel2
+            , spid_email
+            , job
+        FROM
+            sender
+        WHERE
+            spid_id = #{senderId}
+    </select>
+
+    <insert id="insertSender" parameterType="com.espid.estimate.admin.sender.model.Sender" keyColumn="spidId" keyProperty="spidId" useGeneratedKeys="true">
+        INSERT INTO
+            sender (
+                  spid_id
+                , spid_dept
+                , spid_name
+                , spid_tel1
+                , spid_tel2
+                , spid_email
+                , job
+            )
+        VALUES (
+              #{spidId}
+            , #{spidDept}
+            , #{spidName} 
+            , #{spidTel1} 
+            , #{spidTel2} 
+            , #{spidEmail} 
+            , #{job}
+        )
+    </insert>
+
+    <delete id="deleteSender">
+        DELETE FROM
+            sender
+        WHERE
+            spid_id = #{senderId}
+    </delete>
+
+    <update id="updateSender" parameterType="com.espid.estimate.admin.sender.model.Sender">
+        UPDATE 
+            sender
+        SET
+              spid_dept = #{spidDept}
+            , spid_name = #{spidName} 
+            , spid_tel1 = #{spidTel1} 
+            , spid_tel2 = #{spidTel2} 
+            , spid_email = #{spidEmail} 
+            , job = #{job}
+        WHERE
+            spid_id = #{spidId}
+    </update>
+</mapper>

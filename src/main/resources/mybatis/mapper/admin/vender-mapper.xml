@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.admin.vender.mapper.VenderMapper">
+    <select id="selectVenders" resultType="com.espid.estimate.admin.vender.model.Vender">
+        SELECT
+              vender_id
+            , vender_name
+            , sender.spid_id
+            , spid_dept
+            , spid_name
+            , spid_tel1
+            , spid_tel2
+            , spid_email
+            , job
+        FROM
+            sender, vender
+        WHERE 
+            sender.spid_id = vender.spid_id
+        <if test="search != null">
+            AND (vender_name LIKE CONCAT('%', #{search}, '%') 
+            OR  spid_name LIKE CONCAT('%', #{search}, '%')) 
+        </if>
+    </select>
+
+    <select id="findVenderById" resultType="com.espid.estimate.admin.vender.model.Vender">
+        SELECT
+              vender_id
+            , vender_name
+            , spid_id
+        FROM
+            vender
+        WHERE  
+            vender_id = #{venderId}
+    </select>
+
+    <insert id="insertVender" parameterType="com.espid.estimate.admin.vender.model.Vender" keyColumn="venderId" keyProperty="venderId" useGeneratedKeys="true">
+        INSERT INTO
+            vender (
+                  vender_id
+                , vender_name
+                , spid_id
+            )
+        VALUES (
+              #{venderId}
+            , #{venderName}
+            , #{spidId}
+        )
+    </insert>
+
+    <delete id="deleteVender">
+        DELETE FROM
+            vender
+        WHERE
+            vender_id = #{venderId}
+    </delete>
+
+    <update id="updateVender" parameterType="com.espid.estimate.admin.vender.model.Vender">
+        UPDATE
+            vender
+        SET
+              vender_name = #{venderName}
+            , spid_id = #{spidId}
+        WHERE  
+            vender_id = #{venderId}
+    </update>
+</mapper>

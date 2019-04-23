@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.admin.tool.mapper.ToolMapper">
+    <select id="selectTools" resultType="com.espid.estimate.admin.tool.model.Tool">
+        SELECT
+              tool_id
+            , tool_name
+            , tool_model_number
+            , tool_license
+            , vender.vender_id
+            , tool_details
+            , vender_name
+            , spid_id
+        FROM
+            vender, tool
+        WHERE
+            vender.vender_id = tool.vender_id
+        <if test="search != null">
+            AND (tool_name LIKE CONCAT('%', #{search}, '%') 
+            OR  tool_details LIKE CONCAT('%', #{search}, '%')) 
+        </if>
+    </select>
+
+    <select id="findToolById" resultType="com.espid.estimate.admin.tool.model.Tool">
+        SELECT
+              tool_id
+            , tool_name
+            , tool_model_number
+            , tool_license
+            , tool_details
+            , vender_id
+        FROM
+            tool
+        WHERE
+            tool_id = #{toolId}
+    </select>
+
+    <insert id="insertTool" parameterType="com.espid.estimate.admin.tool.model.Tool" keyColumn="toolId" keyProperty="toolId" useGeneratedKeys="true">
+        INSERT INTO
+            tool (
+                  tool_id
+                , tool_name
+                , tool_model_number
+                , tool_license
+                , tool_details
+                , vender_id
+            )
+        VALUES (
+              #{toolId}
+            , #{toolName}
+            , #{toolModelNumber}
+            , #{toolLicense}
+            , #{toolDetails}
+            , #{venderId}
+        )
+
+    </insert>
+
+    <delete id="deleteTool">
+        DELETE FROM
+            tool
+        WHERE
+            tool_id = #{toolId}
+    </delete>
+
+    <update id="updateTool" parameterType="com.espid.estimate.admin.tool.model.Tool">
+        UPDATE 
+            tool
+        SET
+              tool_name = #{toolName}
+            , tool_model_number = #{toolModelNumber}
+            , tool_license = #{toolLicense}
+            , tool_details = #{toolDetails}
+            , vender_id = #{venderId}
+        WHERE
+            tool_id = #{toolId}
+    </update>
+</mapper>

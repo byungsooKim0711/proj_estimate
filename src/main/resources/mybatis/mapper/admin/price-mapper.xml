@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.admin.price.mapper.PriceMapper">
+    
+    <select id="selectPrices" resultType="com.espid.estimate.admin.price.model.Price">
+        SELECT 
+              tool.tool_id
+            , price_id
+            , eur
+            , exchange_rate
+            , krw
+            , quantity
+            , tool_name
+            , tool_model_number
+            , tool_license
+            , tool_details
+            , vender_id
+        FROM
+            price, tool
+        WHERE
+            price.tool_id = tool.tool_id
+        <if test="search != null">
+            AND (tool_name LIKE CONCAT('%', #{search}, '%') 
+            OR  tool_details LIKE CONCAT('%', #{search}, '%')) 
+        </if>
+    </select>
+
+    <select id="findPriceById" resultType="com.espid.estimate.admin.price.model.Price">
+        SELECT
+              price_id
+            , eur
+            , exchange_rate
+            , krw
+            , tool_id
+            , quantity
+        FROM
+            price
+        WHERE 
+            price_id = #{priceId}
+    </select>
+
+    <insert id="insertPrice" parameterType="com.espid.estimate.admin.price.model.Price" keyColumn="priceId" keyProperty="priceId" useGeneratedKeys="true">
+        INSERT INTO
+            price (
+                  price_id
+                , eur
+                , exchange_rate
+                , krw
+                , tool_id
+                , quantity
+            )
+        VALUES (
+              #{priceId}
+            , #{eur}
+            , #{exchangeRate} 
+            , #{krw} 
+            , #{toolId}
+            , #{quantity}
+        )
+    </insert>
+
+    <delete id="deletePrice">
+        DELETE FROM
+            price
+        WHERE  
+            price_id = #{priceId}
+    </delete>
+
+    <update id="updatePrice" parameterType="com.espid.estimate.admin.price.model.Price">
+        UPDATE 
+            price
+        SET
+              eur = #{eur}
+            , exchange_rate = #{exchangeRate} 
+            , krw = #{krw} 
+            , tool_id = #{toolId}
+            , quantity = #{quantity}
+        WHERE
+            price_id = #{priceId}
+    </update>
+</mapper>
