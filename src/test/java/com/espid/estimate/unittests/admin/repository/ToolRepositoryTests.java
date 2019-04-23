@@ -30,7 +30,7 @@ public class ToolRepositoryTests {
     private Vender vender;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         vender  = new Vender();
         vender.setVenderId(1234);
         vender.setVenderName("setup vender name");

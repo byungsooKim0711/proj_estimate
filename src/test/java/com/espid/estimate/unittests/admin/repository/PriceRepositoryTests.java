@@ -30,7 +30,7 @@ public class PriceRepositoryTests {
     private Tool tool;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         tool = new Tool();
         tool.setToolDetails("Tool Details");
         tool.setToolId(1234567890);

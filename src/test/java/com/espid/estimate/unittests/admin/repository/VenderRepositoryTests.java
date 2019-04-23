@@ -30,7 +30,7 @@ public class VenderRepositoryTests {
     private Sender sender;
 
     @Before
-    public void setup() {
+    public void setup() throws Exception {
         sender  = new Sender();
         sender.setJob("사원");
         sender.setSpidDept("Solution 사업본부");
