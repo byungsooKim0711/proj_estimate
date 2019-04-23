@@ -33,8 +33,8 @@ public class VenderService {
         return vender;
     }
 
-    public void deleteVender(int venderId) {
-        venderMapper.deleteVender(venderId);
+    public int deleteVender(int venderId) {
+        return venderMapper.deleteVender(venderId);
     }
 
     public int updateVender(Vender vender) {

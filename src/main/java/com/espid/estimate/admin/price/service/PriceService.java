@@ -34,8 +34,8 @@ public class PriceService {
         return price;
     }
 
-    public void deletePrice(int priceId) {
-        priceMapper.deletePrice(priceId);
+    public int deletePrice(int priceId) {
+        return priceMapper.deletePrice(priceId);
     }
 
     public int updatePrice(Price price) {

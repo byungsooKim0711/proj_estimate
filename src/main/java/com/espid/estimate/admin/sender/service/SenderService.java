@@ -33,8 +33,8 @@ public class SenderService {
         return sender;
     }
 
-    public void deleteSender(int senderId) {
-        senderMapper.deleteSender(senderId);
+    public int deleteSender(int senderId) {
+        return senderMapper.deleteSender(senderId);
     }
 
     public int updateSender(Sender sender) {

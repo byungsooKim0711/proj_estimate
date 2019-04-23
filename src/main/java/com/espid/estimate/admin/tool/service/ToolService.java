@@ -34,8 +34,8 @@ public class ToolService {
         return tool;
     }
 
-    public void deleteTool(int toolId) {
-        toolMapper.deleteTool(toolId);
+    public int deleteTool(int toolId) {
+        return toolMapper.deleteTool(toolId);
     }
 
     public int updateTool(Tool tool) {
