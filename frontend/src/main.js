@@ -11,6 +11,13 @@ import { store } from './store/store'
 /* Vue-js-modal */
 Vue.use(VModal, {dynamic: true, injectModalsContainer: true, dialog: true})
 
+/* vue-moment */
+const moment = require('moment');
+require('moment/locale/ko');
+Vue.use(require('vue-moment'), {
+  moment
+})
+
 /* axios */
 window.axios = require('axios')
 
