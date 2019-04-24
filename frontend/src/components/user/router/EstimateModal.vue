@@ -9,26 +9,32 @@
         <div class="enumber">
             E-Number: ... 고민중 ...
         </div>
+            
+            {{selectedTools}}
 
         <!-- 수신인 -->
         <div class="recipient">
             <table class="type08" v-on:dblclick="modifyRecipient">
+                <colgroup>
+                    <col style="width:auto">
+                    <col style="width:150px">
+                </colgroup>
                 <thead>
                     <tr>
-                        <th scope="cols" rowspan="4" class="gray">수신</th>
-                        <th scope="cols">{{estimate.company}}</th>
+                        <th scope="col" rowspan="4" class="gray">수신</th>
+                        <th scope="col">{{estimateModel.company}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row" rowspan="3"></th>
-                        <td>{{estimate.incharge}}</td>
+                        <td>{{estimateModel.incharge}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimate.tel}}</td>
+                        <td>{{estimateModel.tel}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimate.email}}</td>
+                        <td>{{estimateModel.email}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -37,10 +43,14 @@
         <!-- 발신인 -->
         <div class="caller">
             <table class="type08">
+                <colgroup>
+                    <col style="width:auto">
+                    <col style="width:150px">
+                </colgroup>
                 <thead>
                     <tr>
-                        <th scope="cols" class="gray">발신</th>
-                        <th scope="cols">(주) 에스피아이디</th>
+                        <th scope="col" class="gray">발신</th>
+                        <th scope="col">(주) 에스피아이디</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -65,11 +75,11 @@
                 <tbody>
                     <tr>
                         <th scope="row">제목</th>
-                        <td>{{estimate.title}}</td>
+                        <td>{{estimateModel.title}}</td>
                     </tr>
                     <tr>
                         <th scope="row">견적금액(VAT별도)</th>
-                        <td>{{estimate.estimatePrice | number2Kor}} ({{estimate.estimatePrice | priceWithCommas}})</td>
+                        <td>{{estimateModel.estimatePrice | number2Kor}} ({{estimateModel.estimatePrice | priceWithCommas}})</td>
                     </tr>
                 </tbody>
             </table>
@@ -82,25 +92,25 @@
 
         <!-- 항목 리스트, 총 합계 금액 -->
         <div class="sum">
-            <table class="type08">
+            <table class="final">
                 <colgroup>
-                    <col style="width:30px">
+                    <col style="width:35px">
                     <col style="width:auto">
                     <col style="width:auto">
                     <col style="width:auto">
-                    <col style="width:auto">
-                    <col style="width:auto">
-                    <col style="width:200px">
+                    <col style="width:90px">
+                    <col style="width:40px">
+                    <col style="width:95px">
                 </colgroup>
                 <thead>
                     <tr class="center">
                         <th scope="col">No</th>
-                        <th scope="col">품목</th>
-                        <th scope="col">단위</th>
-                        <th scope="col">상세내역</th>
-                        <th scope="col">단가</th>
-                        <th scope="col">수량</th>
-                        <th scope="col">합계</th>
+                        <th scope="col">품 목</th>
+                        <th scope="col">단 위</th>
+                        <th scope="col">상 세 내 역</th>
+                        <th scope="col">단 가</th>
+                        <th scope="col">수 량</th>
+                        <th scope="col">합 계</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,19 +126,19 @@
                     </tr>
                     <tr class="backgry">
                         <td class="center bold" colspan="6">제안가 (할인적용, VAT 별도)</td>                        
-                        <td class="right bold">{{estimate.estimatePrice | priceWithCommas}}</td>
+                        <td class="right bold">{{estimateModel.estimatePrice | priceWithCommas}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
         <!-- 비고 내용들, 구매 혜택 내용들  -->
-        <div class="note" @dblclick="modifyNote" v-html="estimate.estimateNote">
+        <div class="note" @dblclick="modifyNote" v-html="estimateModel.estimateNote">
         </div>
 
         <!-- 견적날짜(생성날짜) -->
         <div class="edate">
-            {{estimate.estimateDate}}
+            {{estimateModel.estimateDate | moment('YYYY MMMM Do dddd')}}
         </div>
 
         <!-- 회사명 -->
@@ -147,17 +157,17 @@
                 대표이사&nbsp;&nbsp;&nbsp;이 승 주
             </div>
 
+        </div>
             <!-- 대표님 직인 -->
             <span class="seal"> 
             </span>
-        </div>
 
         <!-- 저장, 취소, PDF로 내보내기 -->
-        <div class="btnArea right btm" data-html2canvas-ignore="true">
+        <div class="btnArea right btm" data-html2canvas-ignore="true" style="">
             <button @click="makePDF('#pdf')" class="btns btnBlue">
                 <span>PDF로 내보내기</span>
             </button>
-            <a @click="$emit('close')" class="btns btnBlack">
+            <a @click="save()" class="btns btnBlack">
                 <span>저장</span>
             </a>
             <a @click="$emit('close')" class="btns btnWhite">
@@ -178,7 +188,7 @@ import NoteEditModal from '../edit/NoteEditModal.vue';
 export default {
     name: 'estimate-modal',
 
-    props: ['selectedTools', 'sender', 'estimate'],
+    props: ['selectedTools', 'sender', 'estimateModel'],
 
     data() {
         return {
@@ -188,16 +198,56 @@ export default {
 
     mounted() {
         this.selectedTools.forEach(t => {
-            this.estimate.estimatePrice += t.suggestPrice;
-        })
+            this.estimateModel.estimatePrice += t.suggestPrice;
+
+            if (t.toolDetails == null || t.toolDetails == '') {
+                t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") " + " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
+            }
+        });
     },
 
     methods: {
+
+        /* 견적내용 저장 */
+        save: function () {
+
+            /* 견적 상세 내용 */
+            let estimateDetailModels = []
+
+            this.selectedTools.forEach(tool => {
+                /* 자바 모델에 맞춰 입력 */
+                let data = {
+                    estimateDetails: tool.toolDetails,
+                    quantity: tool.quantity,
+                    unitPrice: tool.priceList[0].krw,
+                    supplyPrice: tool.suggestPrice,
+                    discountRate: tool.rate,
+                    startMaintenance: tool.startMaintenance,
+                    endMaintenance: tool.endMaintenance
+                }
+                estimateDetailModels.push(data);
+            });
+
+            let estimateWholeModel = {
+                "estimateModel": this.estimateModel,
+                "estimateDetailModels": estimateDetailModels
+            }
+            console.log(estimateWholeModel);
+
+            axios.post('/api/estimate', estimateWholeModel, {
+
+            }).then((response) => {
+                console.log(response);
+            }).catch((error) => {
+                console.log(error);
+            });
+        },
+
         /* PDF로 내보내기 */
         makePDF: function (selector) { 
 
             /* 파일 이름 */
-            this.propTitle = new Date().toISOString().slice(0,10).replace(/-/g,"") + "_" + this.estimate.title;
+            this.propTitle = new Date().toISOString().slice(0,10).replace(/-/g,"") + "_" + this.estimateModel.title;
 
 			window.html2canvas = html2canvas 
 			let that = this
@@ -237,7 +287,7 @@ export default {
         modifyRecipient: function () {
             this.$modal.show(
                 RecipientEditModal, {
-                    estimate: this.estimate
+                    estimate: this.estimateModel
                 }, 
                 {
 			        width: "750px",
@@ -257,7 +307,7 @@ export default {
         modifyTitle: function () {
             this.$modal.show(
                 TitleEditModal, {
-                    estimate: this.estimate
+                    estimate: this.estimateModel
                 }, 
                 {
 			        width: "750px",
@@ -276,7 +326,7 @@ export default {
         modifyNote: function () {
             this.$modal.show(
                 NoteEditModal, {
-                    estimate: this.estimate
+                    estimate: this.estimateModel
                 }, 
                 {
 			        width: "750px",
@@ -470,7 +520,7 @@ export default {
     font-weight: bold;
 }
 
-.sum .type08 {
+.sum .final {
     border-collapse: collapse;
     text-align: left;
     line-height: 1.5;
@@ -485,21 +535,19 @@ export default {
 }
 
 /* 합계 제안가 */
-.sum .type08 thead th {
+.sum .final thead th {
     padding: 5px;
     font-weight: bold;
     border: 1px solid black;
 }
-.sum .type08 tbody th {
+.sum .final tbody th {
     padding: 10px;
     font-weight: bold;
     vertical-align: top;
     border: 1px solid black;
 }
-.sum .type08 td {
-    width: 350px;
-    padding: 10px;
-    vertical-align: top;
+.sum .final td {
+    padding: 8px;
     border: 1px solid black;
 }
 
@@ -531,13 +579,13 @@ export default {
 }
 
 .seal{
-    width: 80px;
-    height: 80px;
-    background-size: 75px;
+    width: 50px;
+    height: 50px;
+    /* background-size: 50px; */
     position: absolute;
-    bottom: -20px;
-    right: 230px;
-    background:url(../../../assets/icon/이승주_대표님_직인.png) no-repeat 50%;
+    bottom: 0px;
+    right: 250px;
+    background:url(../../../assets/icon/이승주_대표님_직인1.png) no-repeat 50%;
 }
 .backgry {
     background-color: #f0f0f0;

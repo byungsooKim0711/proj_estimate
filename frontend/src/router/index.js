@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import EstimateMain from '@/components/user/router/EstimateMain'
 import PageNotFound from '@/components/PageNotFound'
+import Root from '@/components/Root'
 import solution1 from '@/components/user/router/Solution1'
 import solution2 from '@/components/user/router/Solution2'
 
@@ -17,8 +17,8 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'EstimateMain',
-      component: EstimateMain
+      name: 'Root',
+      component: Root
     },
     {
       path: '/solution1',
@@ -32,8 +32,8 @@ export default new Router({
     },
     {
       path: '/tech',
-      name: 'EstimateMain',
-      component: EstimateMain
+      name: 'Root',
+      component: Root
     },
 
     /* admin */

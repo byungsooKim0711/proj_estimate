@@ -88,6 +88,7 @@
                                         <th>가격</th>
                                         <th>수량</th>
                                         <th>마진율(%)</th>
+                                        <th>기간</th>
                                         <th>제안가</th>
                                         <th>작업</th>
                                     </tr>
@@ -100,7 +101,8 @@
                                         <!-- <td>{{tool.toolDetails}}</td> -->
                                         <td>{{tool.priceList[0].krw | priceWithCommas}}</td>
                                         <td><input type="number" min="1" v-model.number="tool.quantity" @keydown.enter="calc(tool)"/></td>
-                                        <td><input type="number" min="0" max="100" v-model="tool.profitRate" @keydown.enter="calc(tool)"/></td>
+                                        <td><input type="number" min="0" max="100" v-model="tool.rate" @keydown.enter="calc(tool)"/></td>
+                                        <td><input v-model="tool.startMaintenance" type="date"/><input v-model="tool.endMaintenance" type="date"/></td>
                                         <td>{{tool.suggestPrice | priceWithCommas}}</td>
                                         <td>
                                             <em class="btn txtRed" @click="deleteTool(index)">삭제</em>
@@ -195,6 +197,8 @@ export default {
                 this.originToolList.forEach(tool => {
                     tool.checked = false;
                     tool.checkedMaintenance = false;
+                    tool.startMaintenance = new Date().toISOString().slice(0, 10);
+                    tool.endMaintenance = new Date().toISOString().slice(0, 10);
                     this.venderList.forEach(vender => {
                         if (vender.venderId == tool.venderId) {
                             tool.venderName = vender.venderName;
@@ -220,11 +224,11 @@ export default {
                 tool.quantity = 1;
 
                 if (tool.venderName === 'APIS') {
-                    tool.profitRate = 35;
-                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05 * (1+tool.profitRate/100));
+                    tool.rate = 35;
+                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05 * (1+tool.rate/100));
                 } else if(tool.venderName === 'ISOGRAPH') {
                     tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05);
-                    tool.profitRate = 40
+                    tool.rate = 40
                 }
                 
                 tool.suggestPrice = this.roundUp(tool.suggestPrice, 4);
@@ -250,8 +254,8 @@ export default {
                         CSS Module / CSA Modul    0.18 
                      */
 
-                    tmpTool.profitRate = 35;
-                    tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05 * (1+tmpTool.profitRate/100));
+                    tmpTool.rate = 35;
+                    tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05 * (1+tmpTool.rate/100));
                     if (tmpTool.toolName.includes("FMEA")) {
                         tmpTool.priceList[0].krw *= 0.15
                         tmpTool.suggestPrice *= 0.15;
@@ -265,7 +269,7 @@ export default {
                 } else if(tmpTool.venderName === 'ISOGRAPH') {
                     tmpTool.priceList[0].krw *= 0.15;
                     tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05) * 0.15;
-                    tmpTool.profitRate = 40
+                    tmpTool.rate = 40
                 } else if (tmpTool.venderName === 'OMNEX') {
                     console.log("OMNEX");
                 }
@@ -312,7 +316,7 @@ export default {
                 Estimatemodal, {
                     selectedTools: this.selectTools,
                     sender: this.sender,
-                    estimate: this.estimateModel
+                    estimateModel: this.estimateModel
                 }, 
                 {
 			        width: "794px",
@@ -348,14 +352,14 @@ export default {
                 }
             } else if (venderName === 'APIS') {
                 if (tool.toolLicense.includes("Local")) {
-                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (1+tool.profitRate/100));
+                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (1+tool.rate/100));
                 } else {
                     if(tool.quantity >= 1 && tool.quantity <= 5) {
-                        tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * (1+tool.profitRate/100));
+                        tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * (1+tool.rate/100));
                     } else if (tool.quantity >= 6) {
                         let diff = tool.quantity - 5;
-                        tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * (1+tool.profitRate/100));
-                        tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * (1+tool.profitRate/100)) * diff;
+                        tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * (1+tool.rate/100));
+                        tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * (1+tool.rate/100)) * diff;
                     }
                 }
                     

@@ -99,7 +99,7 @@
                                         <td>{{tool.toolDetails}}</td>
                                         <td>{{tool.priceList[0].krw | priceWithCommas}}</td>
                                         <td><input type="number" min="1" v-model="tool.quantity" @keydown.enter="calc(tool)"/></td>
-                                        <td><input type="number" min="0" max="100" v-model="tool.discountRate" @keydown.enter="calc(tool)"/></td>
+                                        <td><input type="number" min="0" max="100" v-model="tool.rate" @keydown.enter="calc(tool)"/></td>
                                         <td>{{tool.suggestPrice | priceWithCommas}}</td>
                                         <td>
                                             <em class="btn txtRed" @click="deleteTool(index)">삭제</em>
@@ -210,8 +210,8 @@ export default {
         selectTool: function (tool) {
             if (tool.checked == false) {
                 tool.quantity = 1;
-                tool.discountRate = 25;
-                tool.suggestPrice = (tool.quantity * (1-tool.discountRate/100) * tool.priceList[0].krw);
+                tool.rate = 25;
+                tool.suggestPrice = (tool.quantity * (1-tool.rate/100) * tool.priceList[0].krw);
                 this.selectTools.push(tool);
                 tool.checked = !tool.checked;
             }
@@ -237,7 +237,7 @@ export default {
                 Estimatemodal, {
                     selectedTools: this.selectTools,
                     sender: this.sender,
-                    estimate: this.estimateModel
+                    estimateModel: this.estimateModel
                 }, 
                 {
 			        width: "794px",
@@ -254,7 +254,7 @@ export default {
 
         calc: function (tool) {
             /* 분명 좋은 방법이 아니니까 나중에 다시 변경하도록 ! */
-            tool.suggestPrice = (tool.quantity * (1-tool.discountRate/100) * tool.priceList[0].krw);
+            tool.suggestPrice = (tool.quantity * (1-tool.rate/100) * tool.priceList[0].krw);
             this.selectTools.splice(
                   this.selectTools.findIndex(t => t.toolId == tool.toolId) // 시작위치
                 , 1 // 지울 갯수
