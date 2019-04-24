@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-public class EstimateController {
+public class UserEstimateController {
 
     @Autowired
     private UserEstimateService userEstimateService;
