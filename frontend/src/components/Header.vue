@@ -7,7 +7,7 @@
             <li><router-link to="/admin/vender">벤더 관리</router-link></li>
             <li><router-link to="/admin/tool">도구 관리</router-link></li>
             <li><router-link to="/admin/price">가격 관리</router-link></li>
-            <li><router-link to="/">견적 관리</router-link></li>
+            <li><router-link to="/admin/estimate">견적 관리</router-link></li>
         </div>
     </div>
 </template>
