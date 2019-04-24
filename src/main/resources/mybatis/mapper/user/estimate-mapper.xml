@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="com.espid.estimate.user.mapper.UserSenderMapper">
+<mapper namespace="com.espid.estimate.user.mapper.UserEstimateMapper">
 
     <!-- OLD -->
     <!-- <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
@@ -108,4 +108,63 @@
         ORDER BY
             quantity ASC
     </select>
+
+    <insert id="saveEstimate" parameterType="com.espid.estimate.user.model.EstimateModel" keyColumn="estimateId" keyProperty="estimateId" useGeneratedKeys="true">
+        INSERT INTO
+            estimate (
+                  estimate_id
+                , title
+                , estimate_price
+                , company
+                , incharge
+                , tel
+                , email
+                , spid_id
+                , estimate_date
+                , estimate_note
+            )
+        VALUES (
+              #{estimateId}
+            , #{title}
+            , #{estimatePrice}
+            , #{company}
+            , #{incharge}
+            , #{tel}
+            , #{email}
+            , #{spidId}
+            , #{estimateDate}
+            , #{estimateNote}
+        )
+    </insert>
+
+    <insert id="saveEstimateDetail" parameterType="com.espid.estimate.user.model.EstimateDetailModel" keyColumn="estimateDetailId" keyProperty="estimateDetailId" useGeneratedKeys="true">
+        INSERT INTO
+            estimate_detail (
+                  estimate_detail_id
+                , estimate_details
+                , quantity
+                , unit
+                , unit_price
+                , supply_price
+                , estimate_id
+                , discount_rate
+                , start_maintenance
+                , end_maintenance
+            )
+        VALUES 
+        <foreach collection="list" item="item" separator=",">
+            (
+                  #{item.estimateDetailId}
+                , #{item.estimateDetails}
+                , #{item.quantity}
+                , #{item.unit}
+                , #{item.unitPrice}
+                , #{item.supplyPrice}
+                , #{item.estimateId}
+                , #{item.discountRate}
+                , #{item.startMaintenance}
+                , #{item.endMaintenance}
+            )
+        </foreach> 
+    </insert>
 </mapper>
