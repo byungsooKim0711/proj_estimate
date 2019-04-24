@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.espid.estimate.admin.estimate.mapper.EstimateMapper">
+
+    <select id="selectEstimate" resultType="com.espid.estimate.admin.estimate.model.Estimate">
+        SELECT
+              estimate_id
+            , title
+            , estimate_price
+            , company
+            , incharge
+            , tel
+            , email
+            , spid_id
+            , estimate_date
+            , estimate_note
+        FROM
+            estimate
+    </select>
+
+    <select id="findEstimateById" resultType="com.espid.estimate.admin.estimate.model.Estimate">
+        SELECT
+              estimate_id
+            , title
+            , estimate_price
+            , company
+            , incharge
+            , tel
+            , email
+            , spid_id
+            , estimate_date
+            , estimate_note
+        FROM
+            estimate
+        WHERE
+            estimate_id = #{estimateId}
+    </select>
+
+</mapper>

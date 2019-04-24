@@ -1,11 +1,11 @@
-package com.espid.estimate.user.model;
+package com.espid.estimate.admin.estimate.model;
 
 import java.util.Date;
 
 import lombok.Data;
 
 @Data
-public class EstimateDetailModel {
+public class EstimateDetail {
 
     /* 견적서 상세 아이디 */
     private Integer estimateDetailId;

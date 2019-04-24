@@ -10,6 +10,7 @@ import AdminSender from '@/components/admin/router/AdminSender'
 import AdminVender from '@/components/admin/router/AdminVender'
 import AdminTool from '@/components/admin/router/AdminTool'
 import AdminPrice from '@/components/admin/router/AdminPrice'
+import AdminEstimate from '@/components/admin/router/AdminEstimate'
 
 Vue.use(Router)
 
@@ -56,6 +57,11 @@ export default new Router({
       path: '/admin/price',
       name: 'AdminPrice',
       component: AdminPrice
+    },
+    {
+      path: '/admin/estimate',
+      name: 'AdminEstimate',
+      component: AdminEstimate
     },
 
     // 맨 아래에 *이 있으면 위에 리스트를 제외한 나머지
