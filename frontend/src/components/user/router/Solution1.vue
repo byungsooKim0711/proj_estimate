@@ -102,7 +102,7 @@
                                         <td>{{tool.priceList[0].krw | priceWithCommas}}</td>
                                         <td><input type="number" min="1" v-model.number="tool.quantity" @keydown.enter="calc(tool)"/></td>
                                         <td><input type="number" min="0" max="100" v-model="tool.rate" @keydown.enter="calc(tool)"/></td>
-                                        <td><input v-model="tool.startMaintenance" type="date"/><input v-model="tool.endMaintenance" type="date"/></td>
+                                        <td><input v-model="tool.startMaintenance" type="date" @keydown.enter="calc(tool)"/><input v-model="tool.endMaintenance" type="date" @keydown.enter="calc(tool)"/></td>
                                         <td>{{tool.suggestPrice | priceWithCommas}}</td>
                                         <td>
                                             <em class="btn txtRed" @click="deleteTool(index)">삭제</em>
@@ -231,6 +231,10 @@ export default {
                     tool.rate = 40
                 }
                 
+                /* 일수만큼 돈 계산 */
+                let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
+                tool.suggestPrice = (tool.suggestPrice/365) * diff;
+
                 tool.suggestPrice = this.roundUp(tool.suggestPrice, 4);
 
                 tool.checked = true;
@@ -256,7 +260,7 @@ export default {
 
                     tmpTool.rate = 35;
                     tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05 * (1+tmpTool.rate/100));
-                    if (tmpTool.toolName.includes("FMEA")) {
+                    if (tmpTool.toolName.includes("IQ")) {
                         tmpTool.priceList[0].krw *= 0.15
                         tmpTool.suggestPrice *= 0.15;
                     } else if (tmpTool.toolName.includes("CARM")) {
@@ -274,7 +278,12 @@ export default {
                     console.log("OMNEX");
                 }
                 
+                /* 일수만큼 돈 계산 */
+                let diff = this.dateDiffIndays(tmpTool.startMaintenance, tmpTool.endMaintenance);
+                tmpTool.suggestPrice = (tmpTool.suggestPrice/365) * diff;
+
                 tmpTool.suggestPrice = this.roundUp(tmpTool.suggestPrice, 4);
+
                 this.selectTools.push(tmpTool);
                 tool.checkedMaintenance = true;
             }
@@ -376,7 +385,7 @@ export default {
             */
             if (tool.toolName.includes("Maintenance")) {
                 if (tool.venderName === 'APIS') {
-                    if (tool.toolName.includes("FMEA")) {
+                    if (tool.toolName.includes("IQ")) {
                         tool.suggestPrice *= 0.15;
                     } else if (tool.toolName.includes("CARM")) {
                         tool.suggestPrice *= 0.23;
@@ -390,6 +399,10 @@ export default {
                 }
             }
 
+            /* 일수만큼 돈 계산 */
+            let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
+            tool.suggestPrice = (tool.suggestPrice/365) * diff;
+
             tool.suggestPrice = this.roundUp(tool.suggestPrice * 1.05, 4);
 
             /* 분명 좋은 방법이 아니니까 나중에 다시 변경하도록 ! */
@@ -401,12 +414,25 @@ export default {
         },
 
         roundUp: function(number, digit) {
+
+            if(Math.ceil(number).toString().length <= digit) {
+                return number;
+            }
+
             let div = 1;
             for (let i=0; i<digit; i++) {
                 div = div * 10;
             }
             
             return Math.ceil(number/div)*div;
+        },
+
+        /* date1과 date2의 일 수 차이를 구함 */
+        dateDiffIndays: function (date1, date2) {
+            let dt1 = new Date(date1);
+            let dt2 = new Date(date2);
+
+            return  Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
         }
     },
 

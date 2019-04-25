@@ -117,7 +117,7 @@ export default {
                 spidName: null,
                 spidTel1: null,
                 spidTel2: null,
-                spidEmial: null,
+                spidEmail: null,
                 job: null
             },
         }

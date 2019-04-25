@@ -28,9 +28,13 @@ const mutations = {
 }
 
 const actions = {
-    LOAD_ESTIMATES ( {commit} ) {
+    LOAD_ESTIMATES ( {commit}, data ) {
         return axios.get('/admin/estimate', {
-
+            "params": {
+                ...(data.search ? {search: data.search}: {}),
+                from: data.from,
+                to: data.to
+            }
         }).then((response) => {
             commit('LOAD_ESTIMATES', response.data);
         }).catch((error) => {

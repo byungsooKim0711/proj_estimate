@@ -9,22 +9,24 @@
 							<h2 class="tit">견적서 관리</h2>
 							<p class="countMsg">총 <em class="count txtBlue"></em> 건의 견적서가 검색되었습니다.</p>
 							<div class="btnArea right">
-								<span class="selectboxWrap mr10" style="width:130px">
-									<select>
-										<option></option>
-									</select>
+								<span class="inputboxWrap mr10" style="width:160px">
+									<input v-model="from" type="date"/>
+								</span>
+								<span class="inputboxWrap mr10" style="width:160px">
+									<input v-model="to" type="date"/>
 								</span>
                                 <input id="searchInput" v-model="search" @keyup="handleChange()" placeholder="검색" type="text" class="inpText mr10" style="width:200px;">
                                 <span>검색</span>
-								<a class="btns btnLineGray txtBlue" @click="insertEstimate()">
+								<!-- <a class="btns btnLineGray txtBlue" @click="insertEstimate()">
 									<span>등록</span>
-								</a>
+								</a> -->
 							</div>
 							<!-- tblData : s -->
 							<div class="tblData list">
 								<table>
 									<colgroup>
-										<col style="width:350px">
+										<col style="width:80px">
+										<col style="width:auto">
 										<col style="width:auto">
 										<col style="width:auto">
 										<col style="width:auto">
@@ -36,6 +38,7 @@
 									</colgroup>
 									<thead>
 										<tr>
+											<th scope="col">발신인</th>
 											<th scope="col">날짜</th>
 											<th scope="col">제목</th>
 											<th scope="col">회사</th>
@@ -49,16 +52,17 @@
 									</thead>
 									<tbody>
 										<tr v-for="estimate in estimates" :key="estimate.id" >
-											<td>{{estimate.estimateDate | moment('YYYY MMMM Do dddd')}}</td>
+											<td>{{estimate.spidName}}</td>
+											<td>{{estimate.estimateDate | moment('YYYY년 MMMM Do dddd')}}</td>
 											<td>{{estimate.title}}</td>   
                                             <td>{{estimate.company}}</td>
                                             <td>{{estimate.incharge}}</td>
                                             <td>{{estimate.tel}}</td>
                                             <td>{{estimate.email}}</td>
                                             <td>{{estimate.estimateNote}}</td>
-                                            <td>{{estimate.estimatePrice}}</td>
+                                            <td>{{estimate.estimatePrice | priceWithCommas()}}</td>
                                             <td>
-                                                <em @click="updateEstimate(estimate)" class="btn txtGreen02">자세히보기</em>
+                                                <em @click="showDetails(estimate)" class="btn txtGreen02">자세히보기</em>
                                                 <!-- <em @click="deleteEstimate(estimate)" class="btn txtRed">삭제</em> -->
                                             </td>
 										</tr>
@@ -76,6 +80,7 @@
 
 <script>
 import { mapGetters } from 'vuex';
+import AdminEstimateModal from '../edit/estimate/AdminEstimateModal.vue';
 
 export default {
     name: 'admin-estimate',
@@ -84,26 +89,66 @@ export default {
         ...mapGetters({
             estimates: 'getEstimates'
         })
-    },
+	},
+	
+	filters: {
+		priceWithCommas: function (price) {
+            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+        },
+	},
+
+	watch: {
+		from: {
+			handler: function (after, before) {
+				if (after > this.to) {
+					alert("잘못된 날짜를 입력했습니다.");
+					this.from = before;
+				}
+				this.handleChange();
+			}
+		},
+
+		to: {
+			handler: function (after, before) {
+				if (after < this.from) {
+					alert("잘못된 날짜를 입력했습니다.");
+					this.to = before;
+				}
+				this.handleChange();
+			}
+		}
+	},
 
     data() {
         return {
             search: '',
-            _timer: 5000
+			_timer: 5000,
+			from: '2018-01-01',
+			to: new Date().toISOString().slice(0, 10)
         }
     },
 
     methods: {
         getEstimates: function () {
-            this.$store.dispatch('LOAD_ESTIMATES', this.search);
+            this.$store.dispatch('LOAD_ESTIMATES', {search:this.search, from:this.from, to:this.to + " 23:59:59"});
 		},
 		
-		insertEstimate: function () {
-
-		},
-
-		updateEstimate: function (estimate) {
-
+		showDetails: function (estimate) {
+			this.$modal.show(
+                AdminEstimateModal, {
+                    estimate: estimate
+                }, 
+                {
+			        width: "794px",
+					height: "auto",
+					scrollable: true
+                }, 
+                {
+			        name: 'AdminEstimateModal',
+					clickToClose: false,
+					transition: true
+			    }
+		    );
 		},
 
 		deleteEstimate: function (estimate) {
@@ -111,6 +156,9 @@ export default {
 				this.$store.dispatch('DELETE_ESTIMATE', estimate);
 			}
 		},
+
+		insertEstimate: function () {},
+		updateEstimate: function (estimate) {},
 
 		handleChange: function () {
 			clearTimeout(this._timer);

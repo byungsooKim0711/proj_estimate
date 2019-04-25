@@ -1,5 +1,5 @@
 <template>
-    <div id="pdf">
+    <div>
         <!-- 타이틀 -->
         <div class="title">
             견 적 서
@@ -7,12 +7,12 @@
 
         <!-- E-Number -->
         <div class="enumber">
-            {{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
+            {{estimate.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimate.estimateId}}
         </div>
 
         <!-- 수신인 -->
         <div class="recipient">
-            <table class="type08" v-on:dblclick="modifyRecipient">
+            <table class="type08">
                 <colgroup>
                     <col style="width:auto">
                     <col style="width:150px">
@@ -20,19 +20,19 @@
                 <thead>
                     <tr>
                         <th scope="col" rowspan="4" class="gray">수신</th>
-                        <th scope="col">{{estimateModel.company}}</th>
+                        <th scope="col">{{estimate.company}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row" rowspan="3"></th>
-                        <td>{{estimateModel.incharge}}</td>
+                        <td>{{estimate.incharge}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimateModel.tel}}</td>
+                        <td>{{estimate.tel}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimateModel.email}}</td>
+                        <td>{{estimate.email}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -54,14 +54,14 @@
                     <tbody>
                     <tr>
                         <th scope="row" rowspan="3"></th>
-                        <td>{{sender.spidDept}} / {{sender.spidName}} {{sender.job}}</td>
+                        <td>{{estimate.spidDept}} / {{estimate.spidName}} {{estimate.job}}</td>
                     </tr>
                     <tr>
-                        <td v-if="sender.spidTel1 != null">{{sender.spidTel1}} / {{sender.spidTel2}}</td>
-                        <td v-else>{{sender.spidTel2}}</td>
+                        <td v-if="estimate.spidTel1 != null">{{estimate.spidTel1}} / {{estimate.spidTel2}}</td>
+                        <td v-else>{{estimate.spidTel2}}</td>
                     </tr>
                     <tr>
-                        <td>{{sender.spidEmail}}</td>
+                        <td>{{estimate.spidEmail}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -69,15 +69,15 @@
 
         <!-- 제목, 견적금액 -->
         <div class="amount">
-            <table class="type08" @dblclick="modifyTitle">
+            <table class="type08">
                 <tbody>
                     <tr>
                         <th scope="row">제목</th>
-                        <td>{{estimateModel.title}}</td>
+                        <td>{{estimate.title}}</td>
                     </tr>
                     <tr>
                         <th scope="row">견적금액(VAT별도)</th>
-                        <td>{{estimateModel.estimatePrice | number2Kor}} ({{estimateModel.estimatePrice | priceWithCommas}})</td>
+                        <td>{{estimate.estimatePrice | number2Kor}} ({{estimate.estimatePrice | priceWithCommas}})</td>
                     </tr>
                 </tbody>
             </table>
@@ -112,31 +112,31 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr v-for="(tool, index) in selectedTools" :key="tool.id">
+                    <tr v-for="(detail, index) in estimateDetails" :key="detail.id">
                         <td class="center" scope="row">{{index+1}}</td>
-                        <td class="center" v-if="tool.toolModelNumber != null">{{tool.toolName}} {{"(" + tool.toolModelNumber + ")"}}</td>
-                        <td class="center" v-else>{{tool.toolName}}</td>
-                        <td class="center">{{tool.toolLicense}}</td>
-                        <td>{{tool.toolDetails}}</td>
-                        <td class="center">{{tool.priceList[0].krw | priceWithCommas}}</td>
-                        <td class="center">{{tool.quantity}}</td>
-                        <td class="right">{{tool.suggestPrice | priceWithCommas}}</td>
+                        <td class="center" v-if="detail.toolModelNumber != null">{{detail.toolName}} {{"(" + detail.toolModelNumber + ")"}}</td>
+                        <td class="center" v-else>{{detail.toolName}}</td>
+                        <td class="center">{{detail.toolLicense}}</td>
+                        <td>{{detail.estimateDetails}}</td>
+                        <td class="center">{{detail.unitPrice | priceWithCommas}}</td>
+                        <td class="center">{{detail.quantity}}</td>
+                        <td class="right">{{detail.supplyPrice | priceWithCommas}}</td>
                     </tr>
                     <tr class="backgry">
                         <td class="center bold" colspan="6">제안가 (할인적용, VAT 별도)</td>                        
-                        <td class="right bold">{{estimateModel.estimatePrice | priceWithCommas}}</td>
+                        <td class="right bold">{{estimate.estimatePrice | priceWithCommas}}</td>
                     </tr>
                 </tbody>
             </table>
         </div>
         
         <!-- 비고 내용들, 구매 혜택 내용들  -->
-        <div class="note" @dblclick="modifyNote" v-html="estimateModel.estimateNote">
+        <div class="note"  v-html="estimate.estimateNote">
         </div>
 
         <!-- 견적날짜(생성날짜) -->
         <div class="edate">
-            {{estimateModel.estimateDate | moment('YYYY MMMM Do dddd')}}
+            {{estimate.estimateDate | moment('YYYY MMMM Do dddd')}}
         </div>
 
         <!-- 회사명 -->
@@ -156,205 +156,28 @@
             </div>
 
         </div>
-            <!-- 대표님 직인 -->
-            <span class="seal"> 
-            </span>
-
-        <!-- 저장, 취소, PDF로 내보내기 -->
-        <div class="btnArea right btm" data-html2canvas-ignore="true" style="">
-            <button @click="makePDF('#pdf')" class="btns btnBlue">
-                <span>PDF로 내보내기</span>
-            </button>
-            <a @click="save()" class="btns btnBlack">
-                <span>저장</span>
-            </a>
-            <a @click="$emit('close')" class="btns btnWhite">
-                <span>닫기</span>
-            </a>
-        </div>
+        <!-- 대표님 직인 -->
+        <!-- <span class="seal"> 
+        </span> -->
     </div>
 </template>
 
 <script>
-import html2canvas from 'html2canvas';
-import jsPDF from 'jspdf';
-
-import RecipientEditModal from '../edit/RecipientEditModal.vue';
-import TitleEditModal from '../edit/TitleEditModal.vue';
-import NoteEditModal from '../edit/NoteEditModal.vue';
-
 export default {
-    name: 'estimate-modal',
+    name: 'admin-estimate-modal',
 
-    props: ['selectedTools', 'sender', 'estimateModel'],
+    props: ['estimate'],
 
     data() {
         return {
-            propTitle: 'MY_PDF',
-        }
-    },
-
-    mounted() {
-        this.selectedTools.forEach(t => {
-            this.estimateModel.estimatePrice += t.suggestPrice;
-
-            if (t.toolDetails == null || t.toolDetails == '') {
-                t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") " + " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
-            }
-        });
-    },
-
-    methods: {
-
-        /* 견적내용 저장 */
-        save: function () {
-
-            /* 견적 상세 내용 */
-            let estimateDetailModels = []
-
-            this.selectedTools.forEach(tool => {
-                /* 자바 모델에 맞춰 입력 */
-                let data = {
-                    estimateDetails: tool.toolDetails,
-                    quantity: tool.quantity,
-                    unitPrice: tool.priceList[0].krw,
-                    supplyPrice: tool.suggestPrice,
-                    discountRate: tool.rate,
-                    startMaintenance: tool.startMaintenance,
-                    endMaintenance: tool.endMaintenance,
-                    toolName: tool.toolName,
-                    toolLicense: tool.toolLicense
-                }
-                estimateDetailModels.push(data);
-            });
-
-            let estimateWholeModel = {
-                "estimateModel": this.estimateModel,
-                "estimateDetailModels": estimateDetailModels
-            }
-            console.log(estimateWholeModel);
-
-            axios.post('/api/estimate', estimateWholeModel, {
-
-            }).then((response) => {
-                this.estimateModel.estimateId = response.data.estimateModel.estimateId;
-            }).catch((error) => {
-                console.log(error);
-            });
-        },
-
-        /* PDF로 내보내기 */
-        makePDF: function (selector) { 
-
-            /* 파일 이름 */
-            this.propTitle = new Date().toISOString().slice(0,10).replace(/-/g,"") + "_" + this.estimateModel.title;
-
-			window.html2canvas = html2canvas 
-			let that = this
-			let pdf = new jsPDF('p', 'mm', 'a4')
-			let canvas = pdf.canvas
-			const pageWidth = 210 //캔버스 너비 mm
-			const pageHeight = 295 //캔버스 높이 mm
-			canvas.width = pageWidth
-            let ele = document.querySelector(selector)
-			let width = ele.offsetWidth 
-			let height = ele.offsetHeight 
-			let imgHeight = pageWidth * height/width 
-			if(!ele){
-				console.warn(selector + ' is not exist.')
-				return false
-            }
-            html2canvas(ele, {
-                scale: 4 /* 선명도 옵션 */
-            }).then(canvas => {
-                let position = 0
-                    const imgData = canvas.toDataURL('image/png', 20);
-					pdf.addImage(imgData, 'png', 0, position, pageWidth, imgHeight, undefined, 'slow')
-					//Paging 처리
-					let heightLeft = imgHeight
-					heightLeft -= pageHeight
-					while (heightLeft >= 0) {
-						position = heightLeft - imgHeight
-						pdf.addPage();
-						pdf.addImage(imgData, 'png', 0, position, pageWidth, imgHeight)
-						heightLeft -= pageHeight
-					}
-					pdf.save(that.propTitle.toLowerCase() + '.pdf')
-            });
-        },
-
-        /* 수신인 수정 */
-        modifyRecipient: function () {
-            this.$modal.show(
-                RecipientEditModal, {
-                    estimate: this.estimateModel
-                }, 
-                {
-			        width: "750px",
-					height: "auto",
-					scrollable: true
-                }, 
-                {
-			        name: 'RecipientEditModal',
-					clickToClose: false,
-                    transition: true,
-                    'before-close': this.beforeClose
-                }
-		    );
-        },
-
-        /* 제목 수정 */
-        modifyTitle: function () {
-            this.$modal.show(
-                TitleEditModal, {
-                    estimate: this.estimateModel
-                }, 
-                {
-			        width: "750px",
-					height: "auto",
-					scrollable: true
-                }, 
-                {
-			        name: 'TitleEditModal',
-					clickToClose: false,
-                    transition: true
-                }
-		    );
-        },
-
-        /* 비고 수정 */
-        modifyNote: function () {
-            this.$modal.show(
-                NoteEditModal, {
-                    estimate: this.estimateModel
-                }, 
-                {
-			        width: "750px",
-					height: "auto",
-					scrollable: true
-                }, 
-                {
-			        name: 'NoteEditModal',
-					clickToClose: false,
-                    transition: true
-                }
-		    );
-        },
-
-        beforeClose: function(event) {
-            // console.log(event);
+            estimateDetails: []
         }
     },
 
     filters: {
-        /* 19940711 -> 19,940,711 */
         priceWithCommas: function (price) {
             return "￦" + Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            /* let parts = price.toString().split(".");
-            return "￦" + parts[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1]: ""); */
         },
-
-        /* 19,940,711 -> 일금 일천구백구십사만칠백십일원정 */
         number2Kor : function( strNumber ) { 
             strNumber = Math.floor(strNumber).toString();
             strNumber = strNumber.replace(new RegExp(",", "g"), "");
@@ -402,7 +225,23 @@ export default {
                 return korNumber + "원정" ; 
             } 
         } 
-    }
+    },
+
+    methods: {
+        getEstimateDetails: function () {
+            axios.get('/admin/estimate/' + this.estimate.estimateId + '/estimateDetail', {
+
+            }).then((response) => {
+                this.estimateDetails = response.data;
+            }).catch((error) => {
+                console.log(error);
+            });
+        }
+    },
+
+    mounted() {
+        this.getEstimateDetails();
+    },
 }
 </script>
 
@@ -424,9 +263,6 @@ export default {
 /* 수신자 정보 */
 .recipient {
     float: left;
-}
-.recipient:hover {
-    border: 4px solid cornflowerblue;
 }
 .recipient .type08 {
     border-collapse: collapse;
@@ -490,9 +326,6 @@ export default {
 }
 
 /* 제목, 견적금액 */
-.amount .type08:hover {
-    border: 4px solid cornflowerblue;
-}
 .amount .type08 {
     border-collapse: collapse;
     text-align: left;
@@ -555,9 +388,6 @@ export default {
 .note {
     padding: 15px;
 }
-.note:hover {
-    border: 4px solid cornflowerblue;
-}
 .companyinfo {
     text-align: center;
 }
@@ -585,7 +415,7 @@ export default {
     position: absolute;
     bottom: 0px;
     right: 250px;
-    background:url(../../../assets/icon/이승주_대표님_직인1.png) no-repeat 50%;
+    background:url(../../../../assets/icon/이승주_대표님_직인1.png) no-repeat 50%;
 }
 .backgry {
     background-color: #f0f0f0;
