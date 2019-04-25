@@ -31,11 +31,6 @@ export default new Router({
       name: 'solution2',
       component: solution2
     },
-    {
-      path: '/tech',
-      name: 'Root',
-      component: Root
-    },
 
     /* admin */
     {
