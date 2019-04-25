@@ -13,9 +13,8 @@
             , vender_name
             , spid_id
         FROM
-            vender, tool
-        WHERE
-            vender.vender_id = tool.vender_id
+            tool LEFT OUTER JOIN vender
+        ON  vender.vender_id = tool.vender_id
         <if test="search != null">
             AND (tool_name LIKE CONCAT('%', #{search}, '%') 
             OR  tool_details LIKE CONCAT('%', #{search}, '%')) 

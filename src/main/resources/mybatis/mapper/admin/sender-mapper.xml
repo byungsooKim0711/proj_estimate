@@ -13,7 +13,6 @@
             , job
         FROM
             sender
-
         <if test="search != null">
         WHERE
             spid_name LIKE CONCAT('%', #{search}, '%')

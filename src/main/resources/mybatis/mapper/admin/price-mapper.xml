@@ -17,9 +17,8 @@
             , tool_details
             , vender_id
         FROM
-            price, tool
-        WHERE
-            price.tool_id = tool.tool_id
+            price LEFT OUTER JOIN tool
+        ON price.tool_id = tool.tool_id
         <if test="search != null">
             AND (tool_name LIKE CONCAT('%', #{search}, '%') 
             OR  tool_details LIKE CONCAT('%', #{search}, '%')) 

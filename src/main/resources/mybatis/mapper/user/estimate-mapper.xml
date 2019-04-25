@@ -3,17 +3,6 @@
 
 <mapper namespace="com.espid.estimate.user.mapper.UserEstimateMapper">
 
-    <!-- OLD -->
-    <!-- <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
-        <result property="toolId" column="tool_id"/>
-        <result property="toolName" column="tool_name"/>
-        <result property="toolModelNumber" column="tool_model_number"/>
-        <result property="toolLicense" column="tool_license"/>
-        <result property="venderId" column="vender_id"/>
-        <result property="toolDetails" column="tool_details"/>
-        <collection property="priceList" column="tool_id" javaType="java.util.ArrayList" ofType="com.espid.estimate.user.model.PriceModel" select="getPriceListByToolId"/>
-    </resultMap> -->
-
     <!-- NEW 2019-04-22 -->
     <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
         <result property="toolId" column="tool_id"/>
@@ -57,21 +46,6 @@
         WHERE 
             spid_id = #{senderId}
     </select>
-
-    <!-- OLD -->
-    <!-- <select id="getToolListByVenderId" resultMap="toolResultMap">
-        SELECT
-              tool_id
-            , tool_name
-            , tool_model_number
-            , tool_license
-            , tool_details
-            , vender_id
-        FROM
-            tool
-        WHERE 
-            vender_id = #{venderId}
-    </select> -->
 
     <!-- NEW 2019-04-22 -->
     <select id="getToolListByVenderId" resultMap="toolResultMap">
@@ -150,6 +124,8 @@
                 , discount_rate
                 , start_maintenance
                 , end_maintenance
+                , tool_license
+                , tool_name
             )
         VALUES 
         <foreach collection="list" item="item" separator=",">
@@ -164,6 +140,8 @@
                 , #{item.discountRate}
                 , #{item.startMaintenance}
                 , #{item.endMaintenance}
+                , #{item.toolLicense}
+                , #{item.toolName}
             )
         </foreach> 
     </insert>
