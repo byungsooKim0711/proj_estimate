@@ -28,12 +28,24 @@ public class Estimate {
     /* 구매 회사 이메일 */
     private String email;
 
-    /* 발신인 정보 */
-    private Integer spidId;
-    
     /* 견적 날짜*/
     private Date estimateDate;
 
     /* 비고 */
     private String estimateNote;
+
+    /* 발신인 정보 */
+    private Integer spidId;
+
+    private String spidDept;
+
+    private String spidName;
+    
+    private String spidTel1;
+
+    private String spidTel2;
+
+    private String spidEmail;
+
+    private String job;
 }

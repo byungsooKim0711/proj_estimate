@@ -36,4 +36,10 @@ public class EstimateDetail {
 
     /* 유지보수 끝 */
     private Date endMaintenance;
+
+    /* 도구이름 */
+    private String toolName;
+
+    /* 라이센스 */
+    private String toolLicense;
 }

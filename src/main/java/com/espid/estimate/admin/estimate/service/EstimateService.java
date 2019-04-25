@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.espid.estimate.admin.estimate.mapper.EstimateMapper;
 import com.espid.estimate.admin.estimate.model.Estimate;
+import com.espid.estimate.admin.estimate.model.EstimateDetail;
 import com.espid.estimate.exception.ResourceNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +16,15 @@ public class EstimateService {
     @Autowired
     private EstimateMapper estimateMapper;
     
-    public List<Estimate> selectEstimate() throws Exception {
-        return estimateMapper.selectEstimate();
+    public List<Estimate> selectEstimate(String from, String to, String search) throws Exception {
+        return estimateMapper.selectEstimate(from, to, search);
     }
 
     public Estimate findEstimateById(int estimateId) throws Exception {
         return estimateMapper.findEstimateById(estimateId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+    }
+
+    public List<EstimateDetail> findEstimateDetailByEstimateId(int estimateId) throws Exception {
+        return estimateMapper.findEstimateDetailByEstimateId(estimateId);
     }
 }
