@@ -107,7 +107,7 @@ public class SenderServiceTests {
         sender.setJob("사원");
         sender.setSpidDept("Solution 사업본부");
         sender.setSpidEmail("bskim0711@espid.com");
-        sender.setSpidId(1);
+        sender.setSpidId(1234);
         sender.setSpidName("Kimbs");
         sender.setSpidTel1(null);
         sender.setSpidTel2("010-4949-2891");

@@ -7,7 +7,10 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses (
     value = {
-          SenderServiceTests.class
+            SenderServiceTests.class
+          , VenderServiceTests.class
+          , ToolServiceTests.class
+          , PriceServiceTests.class
     }
 )
 public class SuiteServiceTests {
