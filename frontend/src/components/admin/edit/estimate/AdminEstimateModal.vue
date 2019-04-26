@@ -7,7 +7,7 @@
 
         <!-- E-Number -->
         <div class="enumber">
-            {{estimate.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimate.estimateId}}
+            E-Number: {{estimate.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimate.estimateId}}
         </div>
 
         <!-- 수신인 -->

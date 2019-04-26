@@ -39,7 +39,7 @@
 									<thead>
 										<tr>
 											<th scope="col">발신인</th>
-											<th scope="col">날짜</th>
+											<th scope="col">견적날짜</th>
 											<th scope="col">제목</th>
 											<th scope="col">회사</th>
 											<th scope="col">담당자</th>

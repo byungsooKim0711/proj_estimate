@@ -7,7 +7,7 @@
 
         <!-- E-Number -->
         <div class="enumber">
-            {{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
+            E-Number: {{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
         </div>
 
         <!-- 수신인 -->
@@ -232,7 +232,6 @@ export default {
                 "estimateModel": this.estimateModel,
                 "estimateDetailModels": estimateDetailModels
             }
-            console.log(estimateWholeModel);
 
             axios.post('/api/estimate', estimateWholeModel, {
 
@@ -349,9 +348,7 @@ export default {
     filters: {
         /* 19940711 -> 19,940,711 */
         priceWithCommas: function (price) {
-            return "￦" + Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-            /* let parts = price.toString().split(".");
-            return "￦" + parts[0].toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + (parts[1] ? "." + parts[1]: ""); */
+            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         },
 
         /* 19,940,711 -> 일금 일천구백구십사만칠백십일원정 */
