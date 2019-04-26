@@ -28,7 +28,7 @@ public class SenderController {
     private SenderService senderService;
 
     @GetMapping("/sender")
-    public List<Sender> getSender(@RequestParam(name = "search", required = false) String search) throws Exception {
+    public List<Sender> getSenders(@RequestParam(name = "search", required = false) String search) throws Exception {
         return senderService.selectSenders(search);
     }
 
