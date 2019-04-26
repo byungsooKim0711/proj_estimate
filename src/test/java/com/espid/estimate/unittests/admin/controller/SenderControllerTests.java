@@ -48,6 +48,86 @@ public class SenderControllerTests {
     private SenderService senderService;
 
     @Test
+    public void testGetSenders() throws Exception {
+
+        /* arrange */
+        Sender sender1 = new Sender();
+        sender1.setJob("사원");
+        sender1.setSpidDept("Solution 사업본부");
+        sender1.setSpidEmail("bskim0711@espid.com");
+        sender1.setSpidId(1);
+        sender1.setSpidName("김병수");
+        sender1.setSpidTel1(null);
+        sender1.setSpidTel2("010-4949-2891");
+
+        Sender sender2 = new Sender();
+        sender2.setJob("JOB");
+        sender2.setSpidDept("DEPARTMENT");
+        sender2.setSpidEmail("EMAIL");
+        sender2.setSpidId(2);
+        sender2.setSpidName("NAME");
+        sender2.setSpidTel1("TEL1");
+        sender2.setSpidTel2("TEL2");
+
+        List<Sender> senders = new ArrayList<>();
+        senders.add(sender1);
+        senders.add(sender2);
+
+        when(senderService.selectSenders(null)).thenReturn(senders);
+
+        String jsonString = objectMapper.writeValueAsString(senders);
+
+        /* act & assert */
+        mockMvc.perform (
+             get("/admin/sender"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().string(jsonString));
+
+        verify(senderService, times(1)).selectSenders(null);
+    }
+
+    @Test
+    public void testConditionalGetSenders() throws Exception {
+
+        /* arrange */
+        Sender sender1 = new Sender();
+        sender1.setJob("사원");
+        sender1.setSpidDept("Solution 사업본부");
+        sender1.setSpidEmail("bskim0711@espid.com");
+        sender1.setSpidId(1);
+        sender1.setSpidName("김병수");
+        sender1.setSpidTel1(null);
+        sender1.setSpidTel2("010-4949-2891");
+
+        Sender sender2 = new Sender();
+        sender2.setJob("JOB");
+        sender2.setSpidDept("DEPARTMENT");
+        sender2.setSpidEmail("EMAIL");
+        sender2.setSpidId(2);
+        sender2.setSpidName("NAME");
+        sender2.setSpidTel1("TEL1");
+        sender2.setSpidTel2("TEL2");
+
+        List<Sender> senders = new ArrayList<>();
+        senders.add(sender2);
+
+        when(senderService.selectSenders("NAME")).thenReturn(senders);
+
+        String jsonString = objectMapper.writeValueAsString(senders);
+
+        /* act & assert */
+        mockMvc.perform (
+             get("/admin/sender")
+            .param("search", "NAME"))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
+            .andExpect(content().string(jsonString));
+
+        verify(senderService, times(1)).selectSenders("NAME");
+    }
+
+    @Test
     public void testInsertSender() throws Exception {
         
         /* arrange */
@@ -126,87 +206,6 @@ public class SenderControllerTests {
             
 
         verify(senderService, times(1)).findSenderById(sender.getSpidId());
-    }
-
-
-    @Test
-    public void testGetSenders() throws Exception {
-
-        /* arrange */
-        Sender sender1 = new Sender();
-        sender1.setJob("사원");
-        sender1.setSpidDept("Solution 사업본부");
-        sender1.setSpidEmail("bskim0711@espid.com");
-        sender1.setSpidId(1);
-        sender1.setSpidName("김병수");
-        sender1.setSpidTel1(null);
-        sender1.setSpidTel2("010-4949-2891");
-
-        Sender sender2 = new Sender();
-        sender2.setJob("JOB");
-        sender2.setSpidDept("DEPARTMENT");
-        sender2.setSpidEmail("EMAIL");
-        sender2.setSpidId(2);
-        sender2.setSpidName("NAME");
-        sender2.setSpidTel1("TEL1");
-        sender2.setSpidTel2("TEL2");
-
-        List<Sender> senders = new ArrayList<>();
-        senders.add(sender1);
-        senders.add(sender2);
-
-        when(senderService.selectSenders(null)).thenReturn(senders);
-
-        String jsonString = objectMapper.writeValueAsString(senders);
-
-        /* act & assert */
-        mockMvc.perform (
-             get("/admin/sender"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().string(jsonString));
-
-        verify(senderService, times(1)).selectSenders(null);
-    }
-
-    @Test
-    public void testConditionalGetSenders() throws Exception {
-
-        /* arrange */
-        Sender sender1 = new Sender();
-        sender1.setJob("사원");
-        sender1.setSpidDept("Solution 사업본부");
-        sender1.setSpidEmail("bskim0711@espid.com");
-        sender1.setSpidId(1);
-        sender1.setSpidName("김병수");
-        sender1.setSpidTel1(null);
-        sender1.setSpidTel2("010-4949-2891");
-
-        Sender sender2 = new Sender();
-        sender2.setJob("JOB");
-        sender2.setSpidDept("DEPARTMENT");
-        sender2.setSpidEmail("EMAIL");
-        sender2.setSpidId(2);
-        sender2.setSpidName("NAME");
-        sender2.setSpidTel1("TEL1");
-        sender2.setSpidTel2("TEL2");
-
-        List<Sender> senders = new ArrayList<>();
-        senders.add(sender2);
-
-        when(senderService.selectSenders("NAME")).thenReturn(senders);
-
-        String jsonString = objectMapper.writeValueAsString(senders);
-
-        /* act & assert */
-        mockMvc.perform (
-             get("/admin/sender")
-            .param("search", "NAME"))
-            .andExpect(status().isOk())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
-            .andExpect(content().string(jsonString));
-
-        verify(senderService, times(1)).selectSenders("NAME");
     }
 
     @Test

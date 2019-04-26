@@ -13,6 +13,7 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
@@ -26,6 +27,9 @@ public class EstimateApplicationTests {
 
 	@Autowired
 	private TestRestTemplate restTemplate;
+
+	@LocalServerPort
+	private int port;
 
 	private Sender testSender;
 
@@ -48,7 +52,7 @@ public class EstimateApplicationTests {
 
 		/* act */
 		ResponseEntity<List<Sender>> senders = this.restTemplate.exchange (
-			  "/admin/sender"
+			  "http://localhost:" + this.port + "/admin/sender"
 			, HttpMethod.GET
 			, null
 			, new ParameterizedTypeReference<List<Sender>>() {});
@@ -65,7 +69,7 @@ public class EstimateApplicationTests {
 
 		/* act */
 		ResponseEntity<Sender> postResponse = this.restTemplate.postForEntity (
-			    "/admin/sender"
+			    "http://localhost:" + this.port + "/admin/sender"
 			  , postSender
 			  , Sender.class	
 		);
@@ -82,7 +86,7 @@ public class EstimateApplicationTests {
 		Sender postSender = this.testSender;
 
 		ResponseEntity<Sender> postResponse = this.restTemplate.postForEntity (
-			    "/admin/sender"
+			    "http://localhost:" + this.port + "/admin/sender"
 			  , postSender
 			  , Sender.class	
 		);
@@ -105,7 +109,7 @@ public class EstimateApplicationTests {
 		Sender postSender = this.testSender;
 
 		ResponseEntity<Sender> postResponse = this.restTemplate.postForEntity (
-			"/admin/sender"
+			"http://localhost:" + this.port + "/admin/sender"
 			, postSender
 			, Sender.class	
 		);
@@ -122,7 +126,7 @@ public class EstimateApplicationTests {
 
 		/* act */
 		ResponseEntity<Sender> putResponse = this.restTemplate.exchange (
-			  "/admin/sender/{senderId}"
+			  "http://localhost:" + this.port + "/admin/sender/{senderId}"
 			, HttpMethod.PUT
 			, updateEntity
 			, Sender.class
@@ -139,5 +143,4 @@ public class EstimateApplicationTests {
 		assertEquals(updated.getSpidTel1(), putResponse.getBody().getSpidTel1());
 		assertEquals(updated.getSpidTel2(), putResponse.getBody().getSpidTel2());
 	}
-
 }
