@@ -18,8 +18,8 @@
         ON  vender.spid_id = sender.spid_id
         <if test="search != null">
         WHERE 
-            AND (vender_name LIKE CONCAT('%', #{search}, '%') 
-            OR  spid_name LIKE CONCAT('%', #{search}, '%')) 
+               vender_name LIKE CONCAT('%', #{search}, '%') 
+            OR spid_name LIKE CONCAT('%', #{search}, '%')
         </if>
     </select>
 
