@@ -8,6 +8,7 @@ import org.junit.runners.Suite.SuiteClasses;
 @SuiteClasses (
     value = {
           SenderControllerTests.class
+        , VenderControllerTests.class
     }
 )
 public class SuiteControllerTests {
