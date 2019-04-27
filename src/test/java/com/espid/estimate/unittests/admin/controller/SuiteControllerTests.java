@@ -9,6 +9,7 @@ import org.junit.runners.Suite.SuiteClasses;
     value = {
           SenderControllerTests.class
         , VenderControllerTests.class
+        , ToolControllerTests.class
     }
 )
 public class SuiteControllerTests {
