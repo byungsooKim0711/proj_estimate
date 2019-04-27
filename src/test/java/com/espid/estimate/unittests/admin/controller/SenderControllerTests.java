@@ -4,20 +4,21 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.espid.estimate.admin.sender.controller.SenderController;
 import com.espid.estimate.admin.sender.model.Sender;
 import com.espid.estimate.admin.sender.service.SenderService;
 import com.espid.estimate.exception.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.springframework.http.MediaType;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -33,19 +34,30 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.*;
 
-@RunWith(SpringRunner.class)
-@SpringBootTest
-@AutoConfigureMockMvc
 public class SenderControllerTests {
 
-    @Autowired
+    @InjectMocks
+    private SenderController senderController;
+
     private MockMvc mockMvc;
     
-    @Autowired 
-    private ObjectMapper objectMapper;
+    private static ObjectMapper objectMapper;
 
-    @MockBean
+    @Mock
     private SenderService senderService;
+
+    @BeforeClass
+    public static void setUp() {
+        objectMapper = new ObjectMapper();
+    }
+
+    @Before
+    public void init() {
+        MockitoAnnotations.initMocks(this);
+        mockMvc = MockMvcBuilders
+            .standaloneSetup(senderController)
+            .build();
+    }
 
     @Test
     public void testGetSenders() throws Exception {
@@ -152,8 +164,7 @@ public class SenderControllerTests {
             .andDo(print())
             .andExpect(status().isCreated())
             .andExpect(header().string("location", containsString("http://localhost/admin/sender/" + sender.getSpidId())))
-            .andExpect(content().string(equalTo(jsonString))
-        );
+            .andExpect(content().string(equalTo(jsonString)));
     }
 
     @Test
@@ -200,7 +211,7 @@ public class SenderControllerTests {
         /* act & assert */
         mockMvc.perform (
              delete("/admin/sender/{senderId}", sender.getSpidId())
-             .contentType(MediaType.APPLICATION_JSON)
+            .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isNotFound());
             
@@ -223,11 +234,11 @@ public class SenderControllerTests {
 
         when(senderService.findSenderById(sender.getSpidId())).thenReturn(sender);
 
-        Sender updated = senderService.findSenderById(sender.getSpidId());
+        Sender updated = new Sender();
+        updated.setSpidId(sender.getSpidId());
         updated.setJob("updated job");
         updated.setSpidDept("updated department");
         updated.setSpidEmail("updated email");
-        updated.setSpidId(1);
         updated.setSpidName("updated name");
         updated.setSpidTel1("updated tel1");
         updated.setSpidTel2("updated tel2");
@@ -243,7 +254,7 @@ public class SenderControllerTests {
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8))
             .andExpect(content().string(jsonString));
 
-        verify(senderService, times(2)).findSenderById(updated.getSpidId());
+        verify(senderService, times(1)).findSenderById(updated.getSpidId());
         verify(senderService, times(1)).updateSender(updated);
     }
 
