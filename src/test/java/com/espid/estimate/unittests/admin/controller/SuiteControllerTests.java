@@ -10,6 +10,7 @@ import org.junit.runners.Suite.SuiteClasses;
           SenderControllerTests.class
         , VenderControllerTests.class
         , ToolControllerTests.class
+        , PriceControllerTests.class
     }
 )
 public class SuiteControllerTests {
