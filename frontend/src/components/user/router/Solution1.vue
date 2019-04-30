@@ -87,7 +87,7 @@
                                         <!-- <th>상세정보</th> -->
                                         <th>가격</th>
                                         <th>수량</th>
-                                        <th>마진율(%)</th>
+                                        <th>할인율(%)</th>
                                         <th>기간</th>
                                         <th>제안가</th>
                                         <th>작업</th>
@@ -101,7 +101,7 @@
                                         <!-- <td>{{tool.toolDetails}}</td> -->
                                         <td>{{tool.priceList[0].krw | priceWithCommas}}</td>
                                         <td><input type="number" min="1" v-model.number="tool.quantity" @keydown.enter="calc(tool)"/></td>
-                                        <td><input type="number" min="0" max="100" v-model="tool.rate" @keydown.enter="calc(tool)"/></td>
+                                        <td><input type="number" min="0" max="100" v-model="tool.discountRate" @keydown.enter="calc(tool)"/></td>
                                         <td><input v-model="tool.startMaintenance" type="date" @keydown.enter="calc(tool)"/><input v-model="tool.endMaintenance" type="date" @keydown.enter="calc(tool)"/></td>
                                         <td>{{tool.suggestPrice | priceWithCommas}}</td>
                                         <td>
@@ -222,13 +222,13 @@ export default {
         selectTool: function (tool) {
             if (tool.checked == false) {
                 tool.quantity = 1;
+                tool.discountRate = 0;
 
                 if (tool.venderName === 'APIS') {
-                    tool.rate = 35;
-                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05 * (1+tool.rate/100));
+                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05 * 1.35);
                 } else if(tool.venderName === 'ISOGRAPH') {
                     tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05);
-                    tool.rate = 40
+                    // tool.rate = 40
                 }
                 
                 /* 일수만큼 돈 계산 */
@@ -258,8 +258,7 @@ export default {
                         CSS Module / CSA Modul    0.18 
                      */
 
-                    tmpTool.rate = 35;
-                    tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05 * (1+tmpTool.rate/100));
+                    tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05 * 1.35);
                     if (tmpTool.toolName.includes("IQ")) {
                         tmpTool.priceList[0].krw *= 0.15
                         tmpTool.suggestPrice *= 0.15;
@@ -273,7 +272,7 @@ export default {
                 } else if(tmpTool.venderName === 'ISOGRAPH') {
                     tmpTool.priceList[0].krw *= 0.15;
                     tmpTool.suggestPrice = (tmpTool.quantity * tmpTool.priceList[0].eur * tmpTool.priceList[0].exchangeRate * 1.05) * 0.15;
-                    tmpTool.rate = 40
+                    // tmpTool.rate = 40
                 } else if (tmpTool.venderName === 'OMNEX') {
                     console.log("OMNEX");
                 }
@@ -361,14 +360,14 @@ export default {
                 }
             } else if (venderName === 'APIS') {
                 if (tool.toolLicense.includes("Local")) {
-                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (1+tool.rate/100));
+                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.35);
                 } else {
                     if(tool.quantity >= 1 && tool.quantity <= 5) {
-                        tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * (1+tool.rate/100));
+                        tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * 1.35);
                     } else if (tool.quantity >= 6) {
                         let diff = tool.quantity - 5;
-                        tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * (1+tool.rate/100));
-                        tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * (1+tool.rate/100)) * diff;
+                        tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * 1.35);
+                        tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * 1.35) * diff;
                     }
                 }
                     
@@ -403,6 +402,10 @@ export default {
             let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
             tool.suggestPrice = (tool.suggestPrice/365) * diff;
 
+            /* 할인율 적용 */
+            tool.suggestPrice = tool.suggestPrice * (1-tool.discountRate/100);
+
+            /* round up */
             tool.suggestPrice = this.roundUp(tool.suggestPrice * 1.05, 4);
 
             /* 분명 좋은 방법이 아니니까 나중에 다시 변경하도록 ! */

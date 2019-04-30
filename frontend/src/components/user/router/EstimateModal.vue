@@ -7,7 +7,7 @@
 
         <!-- E-Number -->
         <div class="enumber">
-            E-Number: {{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
+            E-Number: T-{{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
         </div>
 
         <!-- 수신인 -->
@@ -77,7 +77,7 @@
                     </tr>
                     <tr>
                         <th scope="row">견적금액(VAT별도)</th>
-                        <td>{{estimateModel.estimatePrice | number2Kor}} ({{estimateModel.estimatePrice | priceWithCommas}})</td>
+                        <td>{{estimateModel.estimatePrice | number2Kor}} (￦{{estimateModel.estimatePrice | priceWithCommas}})</td>
                     </tr>
                 </tbody>
             </table>
@@ -199,7 +199,12 @@ export default {
             this.estimateModel.estimatePrice += t.suggestPrice;
 
             if (t.toolDetails == null || t.toolDetails == '') {
-                t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") " + " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
+                console.log("test1");
+                t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") ";
+            }
+            if (t.toolName.includes("Maintenance")) {
+                console.log("test");
+                t.toolDetails += " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
             }
         });
     },
@@ -219,7 +224,7 @@ export default {
                     quantity: tool.quantity,
                     unitPrice: tool.priceList[0].krw,
                     supplyPrice: tool.suggestPrice,
-                    discountRate: tool.rate,
+                    discountRate: tool.discountRate,
                     startMaintenance: tool.startMaintenance,
                     endMaintenance: tool.endMaintenance,
                     toolName: tool.toolName,

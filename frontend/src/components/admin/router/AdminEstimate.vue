@@ -7,7 +7,7 @@
 					<div class="serviceCont side">
 						<div class="">
 							<h2 class="tit">견적서 관리</h2>
-							<p class="countMsg">총 <em class="count txtBlue"></em> 건의 견적서가 검색되었습니다.</p>
+							<p class="countMsg">총 <em class="count txtBlue">{{estimates.length}}</em> 건의 견적서가 검색되었습니다.</p>
 							<div class="btnArea right">
 								<span class="inputboxWrap mr10" style="width:160px">
 									<input v-model="from" type="date"/>
