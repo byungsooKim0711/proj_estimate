@@ -136,20 +136,7 @@ export default {
 
             toolName: '',
 
-            selectTools: [],
-
-            estimateModel: {
-                estimateId: '',
-                title: '',
-                estimatePrice: 0,
-                company: '',
-                incharge:'',
-                tel: '',
-                email: '',
-                spidId: '',
-                estimateDate: new Date(),
-                estimateNote: '' 
-            }
+            selectTools: []
         }
     },
 
@@ -317,14 +304,10 @@ export default {
 
         /* 견적내기 (견적서 포맷 나옴) */
         showEstimate: function () {
-            this.estimateModel.spidId = this.sender.spidId;
-            this.estimateModel.estimatePrice = 0;
-
             this.$modal.show(
                 Estimatemodal, {
                     selectedTools: this.selectTools,
-                    sender: this.sender,
-                    estimateModel: this.estimateModel
+                    sender: this.sender
                 }, 
                 {
 			        width: "794px",

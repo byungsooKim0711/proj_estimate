@@ -2,7 +2,9 @@ package com.espid.estimate.user.service;
 
 import java.util.List;
 
+import com.espid.estimate.annotation.transactional.WriteTransactional;
 import com.espid.estimate.user.mapper.UserEstimateMapper;
+import com.espid.estimate.user.model.CustomerModel;
 import com.espid.estimate.user.model.EstimateDetailModel;
 import com.espid.estimate.user.model.EstimateModel;
 import com.espid.estimate.user.model.EstimateWholeModel;
@@ -18,32 +20,34 @@ public class UserEstimateService {
     @Autowired
     private UserEstimateMapper userEstimateMapper;
 
-    public SenderModel selectSenderByName(String senderName) {
+    public SenderModel selectSenderByName(String senderName) throws Exception {
         SenderModel sender = userEstimateMapper.selectSenderByName(senderName);
         sender.setVenders(userEstimateMapper.selectVenderBySenderId(sender.getSpidId()));
 
         return sender;
     }
 
-    /* OLD */
-    /* public List<ToolModel> getToolListByVenderId(Integer venderId) {
-        List<ToolModel> toolList = userEstimateMapper.getToolListByVenderId(venderId);
-        
-        toolList.stream().forEach(t -> {
-            List<PriceModel> priceList = userEstimateMapper.getPriceListByToolId(t.getToolId());
-            t.setPriceList(priceList);
-        });
-        return toolList;
-    } */
-
-    /* NEW - 2019-04-22 */
-    public List<ToolModel> getToolListByVenderId(Integer venderId) {
+    public List<ToolModel> getToolListByVenderId(Integer venderId) throws Exception {
         List<ToolModel> toolList = userEstimateMapper.getToolListByVenderId(venderId);
         return toolList;
     }
 
-    public boolean saveWholeEstimate(EstimateWholeModel estimateWholeModel) {
+    @WriteTransactional
+    public boolean saveWholeEstimate(EstimateWholeModel estimateWholeModel) throws Exception {
+
+        /* 고객사 정보가 있는가? */
+        CustomerModel customerModel = estimateWholeModel.getCustomerModel();
+        
+        /* 고객사 정보가 없으면, 새로운 고객사면 등록 */
+        if (customerModel.getCustomerId() == null) {
+            insertCustomer(customerModel);
+        }
+
         EstimateModel estimateModel = estimateWholeModel.getEstimateModel();
+        
+        if (estimateModel.getCustomerId() == null) {
+            estimateModel.setCustomerId(customerModel.getCustomerId());
+        }
 
         /* 견적서 저장 */
         if (this.saveEstimate(estimateModel) == 1) {
@@ -60,11 +64,20 @@ public class UserEstimateService {
         return false;
     }
 
-    public int saveEstimate(EstimateModel estimateModel) {
+    public int saveEstimate(EstimateModel estimateModel) throws Exception {
         return userEstimateMapper.saveEstimate(estimateModel);
     }
 
-    public int saveEstimateDetail(List<EstimateDetailModel> estimateDetailModels) {
+    public int saveEstimateDetail(List<EstimateDetailModel> estimateDetailModels) throws Exception {
         return userEstimateMapper.saveEstimateDetail(estimateDetailModels);
+    }
+
+    public List<CustomerModel> selectCustomers(String search) throws Exception {
+        return userEstimateMapper.selectCustomers(search);
+    }
+
+    public CustomerModel insertCustomer(CustomerModel customer) throws Exception {
+        userEstimateMapper.insertcustomer(customer);
+        return customer;
     }
 }

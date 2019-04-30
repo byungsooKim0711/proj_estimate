@@ -89,25 +89,19 @@
                   estimate_id
                 , title
                 , estimate_price
-                , company
-                , incharge
-                , tel
-                , email
                 , spid_id
                 , estimate_date
                 , estimate_note
+                , customer_id
             )
         VALUES (
               #{estimateId}
             , #{title}
             , #{estimatePrice}
-            , #{company}
-            , #{incharge}
-            , #{tel}
-            , #{email}
             , #{spidId}
             , #{estimateDate}
             , #{estimateNote}
+            , #{customerId}
         )
     </insert>
 
@@ -144,5 +138,39 @@
                 , #{item.toolName}
             )
         </foreach> 
+    </insert>
+
+    <select id="selectCustomers" resultType="com.espid.estimate.user.model.CustomerModel">
+        SELECT
+              customer_id
+            , customer_company
+            , customer_name
+            , customer_tel
+            , customer_email
+        FROM
+            customer
+        <if test="search != null">
+        WHERE
+               customer_company LIKE CONCAT('%', #{search}, '%')
+            OR customer_name LIKE CONCAT('%', #{search}, '%')
+        </if>
+    </select>
+
+    <insert id="insertcustomer" parameterType="com.espid.estimate.user.model.CustomerModel" keyColumn="customerId" keyProperty="customerId" useGeneratedKeys="true">
+        INSERT INTO
+            customer (
+                  customer_id
+                , customer_company
+                , customer_name
+                , customer_tel
+                , customer_email    
+            )
+        VALUES ( 
+              #{customerId}
+            , #{customerCompany}
+            , #{customerName}
+            , #{customerTel}
+            , #{customerEmail}
+        )
     </insert>
 </mapper>

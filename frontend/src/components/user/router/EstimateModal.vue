@@ -1,13 +1,14 @@
 <template>
     <div id="pdf">
         <!-- 타이틀 -->
+        {{estimateModel}}
         <div class="title">
             견 적 서
         </div>
 
         <!-- E-Number -->
         <div class="enumber">
-            E-Number: T-{{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" +estimateModel.estimateId}}
+            E-Number: T-{{estimateModel.estimateDate | moment('YYYY-MM-DD')}}{{"-" + estimateModel.estimateId}}
         </div>
 
         <!-- 수신인 -->
@@ -20,19 +21,19 @@
                 <thead>
                     <tr>
                         <th scope="col" rowspan="4" class="gray">수신</th>
-                        <th scope="col">{{estimateModel.company}}</th>
+                        <th scope="col">{{customer.customerCompany}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row" rowspan="3"></th>
-                        <td>{{estimateModel.incharge}}</td>
+                        <td>{{customer.customerName}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimateModel.tel}}</td>
+                        <td>{{customer.customerTel}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimateModel.email}}</td>
+                        <td>{{customer.customerEmail}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -186,25 +187,42 @@ import NoteEditModal from '../edit/NoteEditModal.vue';
 export default {
     name: 'estimate-modal',
 
-    props: ['selectedTools', 'sender', 'estimateModel'],
+    props: ['selectedTools', 'sender'],
 
     data() {
         return {
             propTitle: 'MY_PDF',
+            customer: {
+                customerId: null,
+                customerCompany: null,
+                customerName: null,
+                customerTel: null,
+                customerEmail: null
+            },
+
+            estimateModel: {
+                estimateId: null,
+                title: null,
+                estimatePrice: 0,
+                spidId: null,
+                estimateDate: new Date(),
+                estimateNote: '',
+                customerId: null
+            }
         }
     },
 
     mounted() {
+        this.estimateModel.spidId = this.sender.spidId;
+
         this.selectedTools.forEach(t => {
             this.estimateModel.estimatePrice += t.suggestPrice;
 
             if (t.toolDetails == null || t.toolDetails == '') {
-                console.log("test1");
                 t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") ";
             }
             if (t.toolName.includes("Maintenance")) {
-                console.log("test");
-                t.toolDetails += " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
+                t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") " + " (" + t.startMaintenance + " ~ " + t.endMaintenance + ")";
             }
         });
     },
@@ -213,6 +231,8 @@ export default {
 
         /* 견적내용 저장 */
         save: function () {
+
+            this.estimateModel.customerId = this.customer.customerId;
 
             /* 견적 상세 내용 */
             let estimateDetailModels = []
@@ -234,6 +254,7 @@ export default {
             });
 
             let estimateWholeModel = {
+                "customerModel": this.customer,
                 "estimateModel": this.estimateModel,
                 "estimateDetailModels": estimateDetailModels
             }
@@ -291,10 +312,11 @@ export default {
         modifyRecipient: function () {
             this.$modal.show(
                 RecipientEditModal, {
+                    customer: this.customer,
                     estimate: this.estimateModel
                 }, 
                 {
-			        width: "750px",
+			        width: "400px",
 					height: "auto",
 					scrollable: true
                 }, 

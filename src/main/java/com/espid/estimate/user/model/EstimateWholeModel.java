@@ -6,6 +6,8 @@ import lombok.Data;
 
 @Data
 public class EstimateWholeModel {
+
+    private CustomerModel customerModel;
     
     private EstimateModel estimateModel;
 

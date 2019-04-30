@@ -8,13 +8,10 @@
               estimate_id
             , title
             , estimate_price
-            , company
-            , incharge
-            , tel
-            , email
             , estimate_date
             , estimate_note
             , sender.spid_id
+            , customer_id
             , spid_dept
             , spid_name
             , spid_tel1
@@ -42,10 +39,7 @@
               estimate_id
             , title
             , estimate_price
-            , company
-            , incharge
-            , tel
-            , email
+            , customer_id
             , spid_id
             , estimate_date
             , estimate_note
