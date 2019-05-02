@@ -70,8 +70,13 @@
                 <div class="serviceCont side">
                     <div class="">
                         <h2 class="tit">추가된 품목</h2>
-                        <p class="countMsg">  <em class="count txtBlue"></em> </p>
+                        <p class="countMsg"> <em class="count txtBlue"></em></p>
                         <div class="btnArea right">
+                            <span @dblclick="deleteCustomer()" class="btns txtOrange">{{customer.customerCompany + "(" + customer.customerName + ")"}}</span>
+                            
+                            <a class="btns btnLineGray txtBlue" @click="searchCustomer()">
+                                <span>고객사 검색</span>
+                            </a>
                             <a class="btns btnLineGray txtBlue" @click="showEstimate()">
                                 <span>견적내기</span>
                             </a>
@@ -120,6 +125,7 @@
 
 <script>
 import Estimatemodal from './EstimateModal.vue';
+import CustomerSearchModal from '../edit/CustomerSearchModal.vue';
 
 export default {
     name: 'solution1',
@@ -136,7 +142,16 @@ export default {
 
             toolName: '',
 
-            selectTools: []
+            selectTools: [],
+
+            /*  */
+            customer: {
+                customerId: null,
+                customerCompany: null,
+                customerName: null,
+                customerTel: null,
+                customerEmail: null
+            },
         }
     },
 
@@ -164,9 +179,7 @@ export default {
     methods: {
         getSenderInfo: function () {
             axios.get('/api/getSender/' + this.senderName, {
-                "headers": {
-                    'Content-Type': 'application/JSON; charset=UTF-8'
-                }
+
             }).then((response) => {
                 this.sender = response.data;
                 this.venderList = this.sender.venders;
@@ -302,12 +315,33 @@ export default {
             }
         },
 
+        /* 고객사 검색 */
+        searchCustomer: function() {
+             this.$modal.show(
+                CustomerSearchModal, {
+                    customer: this.customer,
+                    selectedTools: this.selectTools,
+                }, 
+                {
+			        width: "480px",
+					height: "auto",
+					scrollable: true
+                }, 
+                {
+			        name: 'CustomerSearchModal',
+					clickToClose: false,
+					transition:true
+			    }
+		    );
+        },
+
         /* 견적내기 (견적서 포맷 나옴) */
         showEstimate: function () {
             this.$modal.show(
                 Estimatemodal, {
                     selectedTools: this.selectTools,
-                    sender: this.sender
+                    sender: this.sender,
+                    customer: this.customer
                 }, 
                 {
 			        width: "794px",
@@ -331,32 +365,95 @@ export default {
 
             let venderName = tool.venderName;
 
-            if (venderName === 'ISOGRAPH') {
-                if (tool.quantity === 1) {
-                    tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate);
-                } else if (tool.quantity === 2) {
-                    /* { ( EUR * 환율 * 1.6 ) } */
-                    tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate) * 1.6;
-                } else if (tool.quantity >= 3) {
-                    /* { ( 0.4 * EUR * 환율 * (N+2) ) } */
-                    tool.suggestPrice = (0.4 * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (tool.quantity+2));
-                }
-            } else if (venderName === 'APIS') {
-                if (tool.toolLicense.includes("Local")) {
-                    tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.35);
-                } else {
-                    if(tool.quantity >= 1 && tool.quantity <= 5) {
-                        tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * 1.35);
-                    } else if (tool.quantity >= 6) {
-                        let diff = tool.quantity - 5;
-                        tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * 1.35);
-                        tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * 1.35) * diff;
-                    }
-                }
-                    
-            } else if (venderName === 'OMNEX') {
-                console.log("OMNEX");
+            let toolHistoryQuantity = 0;
+
+            if (this.customer.customerId != null) {
+                this.customer.estimateModels.forEach(e => {
+                    e.estimateDetailModels.forEach(d => {
+                        this.selectTools.forEach(t => {
+                            if (d.toolName == t.toolName && d.toolLicense == t.toolLicense) {
+                                if (d.toolName.includes("Maintenance")) {
+                                    
+                                } else {
+                                    toolHistoryQuantity += d.quantity;
+                                }  
+                            }
+                        })
+                    });
+                });
             }
+
+            console.log(this.customer);
+
+            if (toolHistoryQuantity != 0) {
+                if (venderName === 'ISOGRAPH') {
+                    if (tool.quantity === 1) {
+                        tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate);
+                    } else if (tool.quantity === 2) {
+                        /* { ( EUR * 환율 * 1.6 ) } */
+                        tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate) * 1.6;
+                    } else if (tool.quantity >= 3) {
+                        /* { ( 0.4 * EUR * 환율 * (N+2) ) } */
+                        tool.suggestPrice = (0.4 * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (tool.quantity+2));
+                    }
+                } else if (venderName === 'APIS') {
+                    if (tool.toolLicense.includes("Local")) {
+                        tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.35);
+                    } else {
+                        if((tool.quantity+toolHistoryQuantity) >= 1 && (tool.quantity+toolHistoryQuantity) <= 5) {
+                            tool.suggestPrice = 
+                                (tool.priceList[tool.quantity+toolHistoryQuantity-1].eur * tool.priceList[tool.quantity+toolHistoryQuantity-1].exchangeRate * 1.35)
+                                - (tool.priceList[toolHistoryQuantity-1].eur * tool.priceList[toolHistoryQuantity-1].exchangeRate * 1.35);
+                        } else if ((tool.quantity+toolHistoryQuantity) >= 6) {
+                            
+                            let diff = (tool.quantity+toolHistoryQuantity) - 5;
+
+                            if (toolHistoryQuantity >= 6) {
+                                tool.suggestPrice = (tool.priceList[5].eur * tool.priceList[5].exchangeRate * 1.35) * tool.quantity;
+                            } else {
+                                tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * 1.35);
+                                tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * 1.35) * diff;
+    
+                                tool.suggestPrice -= (tool.priceList[toolHistoryQuantity-1].eur * tool.priceList[toolHistoryQuantity-1].exchangeRate * 1.35);
+                            }
+                        }
+                    }
+                        
+                } else if (venderName === 'OMNEX') {
+                    console.log("OMNEX");
+                }
+            }
+
+            else {
+
+                if (venderName === 'ISOGRAPH') {
+                    if (tool.quantity === 1) {
+                        tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate);
+                    } else if (tool.quantity === 2) {
+                        /* { ( EUR * 환율 * 1.6 ) } */
+                        tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate) * 1.6;
+                    } else if (tool.quantity >= 3) {
+                        /* { ( 0.4 * EUR * 환율 * (N+2) ) } */
+                        tool.suggestPrice = (0.4 * tool.priceList[0].eur * tool.priceList[0].exchangeRate * (tool.quantity+2));
+                    }
+                } else if (venderName === 'APIS') {
+                    if (tool.toolLicense.includes("Local")) {
+                        tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.35);
+                    } else {
+                        if(tool.quantity >= 1 && tool.quantity <= 5) {
+                            tool.suggestPrice = (tool.priceList[tool.quantity-1].eur * tool.priceList[tool.quantity-1].exchangeRate * 1.35);
+                        } else if (tool.quantity >= 6) {
+                            let diff = tool.quantity - 5;
+                            tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * 1.35);
+                            tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * 1.35) * diff;
+                        }
+                    }
+                        
+                } else if (venderName === 'OMNEX') {
+                    console.log("OMNEX");
+                }
+            }
+
 
             /* 유지보수 일 때 */
             /*
@@ -419,6 +516,16 @@ export default {
             let dt2 = new Date(date2);
 
             return  Math.floor((Date.UTC(dt2.getFullYear(), dt2.getMonth(), dt2.getDate()) - Date.UTC(dt1.getFullYear(), dt1.getMonth(), dt1.getDate()) ) /(1000 * 60 * 60 * 24));
+        },
+
+        deleteCustomer: function () {
+            if (confirm("선택한 고객사를 초기화하겠습니까?")) {
+                this.customer.customerId = null;
+                this.customer.customerCompany = null;
+                this.customer.customerName = null;
+                this.customer.customerTel = null;
+                this.customer.customerEmail = null;
+            }
         }
     },
 

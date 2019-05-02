@@ -9,6 +9,7 @@ import com.espid.estimate.user.model.EstimateDetailModel;
 import com.espid.estimate.user.model.EstimateModel;
 import com.espid.estimate.user.model.EstimateWholeModel;
 import com.espid.estimate.user.model.SenderModel;
+import com.espid.estimate.user.model.ToolNameAndLicense;
 import com.espid.estimate.user.model.ToolModel;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,8 +73,14 @@ public class UserEstimateService {
         return userEstimateMapper.saveEstimateDetail(estimateDetailModels);
     }
 
-    public List<CustomerModel> selectCustomers(String search) throws Exception {
-        return userEstimateMapper.selectCustomers(search);
+    public List<CustomerModel> selectCustomers(String search, List<ToolNameAndLicense> test) throws Exception {
+        List<CustomerModel> customerModels = userEstimateMapper.selectCustomers(search);
+
+        customerModels.forEach(c -> {
+            c.setEstimateModels(userEstimateMapper.selectEstimateByCustomerId(c.getCustomerId(), test));
+        });
+
+        return customerModels;
     }
 
     public CustomerModel insertCustomer(CustomerModel customer) throws Exception {

@@ -20,19 +20,19 @@
                 <thead>
                     <tr>
                         <th scope="col" rowspan="4" class="gray">수신</th>
-                        <th scope="col">{{estimate.company}}</th>
+                        <th scope="col">{{estimate.customerCompany}}</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
                         <th scope="row" rowspan="3"></th>
-                        <td>{{estimate.incharge}}</td>
+                        <td>{{estimate.customerName}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimate.tel}}</td>
+                        <td>{{estimate.customerTel}}</td>
                     </tr>
                     <tr>
-                        <td>{{estimate.email}}</td>
+                        <td>{{estimate.customerEmail}}</td>
                     </tr>
                 </tbody>
             </table>

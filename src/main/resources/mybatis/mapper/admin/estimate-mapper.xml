@@ -11,24 +11,28 @@
             , estimate_date
             , estimate_note
             , sender.spid_id
-            , customer_id
             , spid_dept
             , spid_name
             , spid_tel1
             , spid_tel2
             , spid_email
             , job
+            , customer.customer_id
+            , customer_company
+            , customer_name
+            , customer_tel
+            , customer_email
         FROM
             estimate LEFT OUTER JOIN sender 
-        ON sender.spid_id = estimate.spid_id
+        ON sender.spid_id = estimate.spid_id LEFT OUTER JOIN customer
+        ON customer.customer_id = estimate.customer_id
         <if test="from != null and to != null">
         WHERE
             estimate_date BETWEEN #{from} AND #{to}
         </if>
         <if test="search != null">
             AND (
-                   company LIKE CONCAT('%', #{search}, '%')
-                OR title LIKE CONCAT('%', #{search}, '%')
+                   title LIKE CONCAT('%', #{search}, '%')
                 OR spid_name LIKE CONCAT('%', #{search}, '%')
             )
         </if>

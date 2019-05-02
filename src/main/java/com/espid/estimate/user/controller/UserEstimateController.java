@@ -6,6 +6,7 @@ import com.espid.estimate.user.model.CustomerModel;
 import com.espid.estimate.user.model.EstimateWholeModel;
 import com.espid.estimate.user.model.SenderModel;
 import com.espid.estimate.user.model.ToolModel;
+import com.espid.estimate.user.model.ToolNameAndLicense;
 import com.espid.estimate.user.service.UserEstimateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,8 +58,8 @@ public class UserEstimateController {
         return new ResponseEntity<>(estimateWholeModel, headers, HttpStatus.CREATED);
     }
 
-    @GetMapping("/customer")
-    public List<CustomerModel> getCustomers(@RequestParam(name = "search") String search) throws Exception {
-        return userEstimateService.selectCustomers(search);
+    @PostMapping("/customer")
+    public List<CustomerModel> getCustomers(@RequestParam(name = "search") String search, @RequestBody List<ToolNameAndLicense> test) throws Exception {
+        return userEstimateService.selectCustomers(search, test);
     }
 }

@@ -3,7 +3,7 @@
 
 <mapper namespace="com.espid.estimate.user.mapper.UserEstimateMapper">
 
-    <!-- NEW 2019-04-22 -->
+    <!-- Tool & Price -->
     <resultMap id="toolResultMap" type="com.espid.estimate.user.model.ToolModel">
         <result property="toolId" column="tool_id"/>
         <result property="toolName" column="tool_name"/>
@@ -18,6 +18,32 @@
             <result property="krw" column="krw"/>
             <result property="toolId" column="tool_id"/>
             <result property="quantity" column="quantity"/>
+        </collection>
+    </resultMap>
+
+    <!-- Estimate & EstimateDetail -->
+    <resultMap id="estimateResultMap" type="com.espid.estimate.user.model.EstimateModel">
+        <result property="estimateId" column="estimate_id"/>
+        <result property="title" column="title"/>
+        <result property="estimatePrice" column="estimate_price"/>
+        <result property="spidId" column="spid_id"/>
+        <result property="estimateDate" column="estimate_date"/>
+        <result property="estimateNote" column="estimate_note"/>
+        <result property="customerId" column="customer_id"/>
+        <collection property="estimateDetailModels" javaType="java.util.ArrayList" ofType="com.espid.estimate.user.model.EstimateDetailModel">
+            <id property="estimateDetailId" column="estimate_detail_id"/>
+            <result property="estimateDetailId" column="estimate_detail_id"/>
+            <result property="estimateDetails" column="estimate_details"/>
+            <result property="quantity" column="quantity"/>
+            <result property="unit" column="unit"/>
+            <result property="unitPrice" column="unit_price"/>
+            <result property="supplyPrice" column="supply_price"/>
+            <result property="estimateId" column="estimate_id"/>
+            <result property="discountRate" column="discount_rate"/>
+            <result property="startMaintenance" column="start_maintenance"/>
+            <result property="endMaintenance" column="end_maintenance"/>
+            <result property="toolName" column="tool_name"/>
+            <result property="toolLicense" column="tool_license"/>
         </collection>
     </resultMap>
 
@@ -140,7 +166,7 @@
         </foreach> 
     </insert>
 
-    <select id="selectCustomers" resultType="com.espid.estimate.user.model.CustomerModel">
+    <select id="selectCustomers" resultType="com.espid.estimate.user.model.CustomerModel" parameterType="com.espid.estimate.user.model.ToolNameAndLicense">
         SELECT
               customer_id
             , customer_company
@@ -173,4 +199,36 @@
             , #{customerEmail}
         )
     </insert>
+    
+    <select id="selectEstimateByCustomerId" resultMap="estimateResultMap" parameterType="com.espid.estimate.user.model.ToolNameAndLicense">
+        SELECT
+              estimate.estimate_id
+            , title
+            , estimate_price
+            , spid_id
+            , estimate_date
+            , estimate_note
+            , customer_id
+            , estimate_detail_id
+            , estimate_details
+            , quantity
+            , unit
+            , unit_price
+            , supply_price
+            , discount_rate
+            , start_maintenance
+            , end_maintenance
+            , tool_name
+            , tool_license
+        FROM
+            estimate, estimate_detail
+        WHERE
+                estimate.estimate_id = estimate_detail.estimate_id
+            AND customer_id = #{customerId} 
+            AND (
+            <foreach item="item" collection="list" separator="OR" open="(" close=")">
+                tool_name = #{item.toolName} AND tool_license = #{item.toolLicense}
+            </foreach>
+            )
+    </select>
 </mapper>

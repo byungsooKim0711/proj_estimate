@@ -55,10 +55,10 @@
 											<td>{{estimate.spidName}}</td>
 											<td>{{estimate.estimateDate | moment('YYYY년 MMMM Do dddd')}}</td>
 											<td>{{estimate.title}}</td>   
-                                            <td>{{estimate.company}}</td>
-                                            <td>{{estimate.incharge}}</td>
-                                            <td>{{estimate.tel}}</td>
-                                            <td>{{estimate.email}}</td>
+                                            <td>{{estimate.customerCompany}}</td>
+                                            <td>{{estimate.customerName}}</td>
+                                            <td>{{estimate.customerTel}}</td>
+                                            <td>{{estimate.customerEmail}}</td>
                                             <td>{{estimate.estimateNote}}</td>
                                             <td>{{estimate.estimatePrice | priceWithCommas()}}</td>
                                             <td>

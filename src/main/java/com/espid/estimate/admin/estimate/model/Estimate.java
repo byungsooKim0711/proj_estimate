@@ -16,9 +16,6 @@ public class Estimate {
     /* 총 견적금액 */
     private int estimatePrice;
 
-    /* 고객사 아이디 */
-    private Integer customerId;
-
     /* 견적 날짜*/
     private Date estimateDate;
 
@@ -39,4 +36,15 @@ public class Estimate {
     private String spidEmail;
 
     private String job;
+
+    /* 고객사 아이디 */
+    private Integer customerId;
+
+    private String customerCompany;
+
+    private String customerName;
+
+    private String customerTel;
+
+    private String customerEmail;
 }

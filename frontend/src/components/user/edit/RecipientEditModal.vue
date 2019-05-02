@@ -4,7 +4,6 @@
             <div class="popup">
                 <div class="popupHead">
                     <strong class="tit">고객사</strong>
-                    {{customer}}
                 </div>
                 <div class="popupCont">
                     <!-- 내용 : s -->
@@ -62,13 +61,13 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="btnArea right btm">
+                    <!-- <div class="btnArea right btm">
                         <span>
                             <a class="btns btnLineGray" @click="searchCustomer()" style="width: 340px">
                                 <span>고객사 검색</span>
                             </a>
                         </span>
-                    </div>
+                    </div> -->
                     <div class="btnArea right btm">
                         <a @click="save()" class="btns btnBlack">
                             <span>저장</span>

@@ -71,6 +71,11 @@
                         <h2 class="tit">추가된 품목</h2>
                         <p class="countMsg">  <em class="count txtBlue"></em> </p>
                         <div class="btnArea right">
+                            <span @dblclick="deleteCustomer()" class="btns txtOrange">{{customer.customerCompany + "(" + customer.customerName + ")"}}</span>
+                            
+                            <a class="btns btnLineGray txtBlue" @click="searchCustomer()">
+                                <span>고객사 검색</span>
+                            </a>
                             <a class="btns btnLineGray txtBlue" @click="showEstimate()">
                                 <span>견적내기</span>
                             </a>
@@ -117,6 +122,7 @@
 
 <script>
 import Estimatemodal from './EstimateModal.vue';
+import CustomerSearchModal from '../edit/CustomerSearchModal.vue';
 
 export default {
     name: 'solution2',
@@ -135,18 +141,13 @@ export default {
 
             selectTools: [],
 
-            estimateModel: {
-                estimateId: '',
-                title: '',
-                estimatePrice: 0,
-                company: '',
-                incharge:'',
-                tel: '',
-                email: '',
-                spidId: '',
-                estimateDate: new Date(),
-                estimateNote: '' 
-            }
+            customer: {
+                customerId: null,
+                customerCompany: null,
+                customerName: null,
+                customerTel: null,
+                customerEmail: null
+            },
         }
     },
 
@@ -174,9 +175,7 @@ export default {
     methods: {
         getSenderInfo: function () {
             axios.get('/api/getSender/' + this.senderName, {
-                "headers": {
-                    'Content-Type': 'application/JSON; charset=UTF-8'
-                }
+
             }).then((response) => {
                 this.sender = response.data;
                 this.venderList = this.sender.venders;
@@ -227,17 +226,34 @@ export default {
             }
         },
 
+        /* 고객사 검색 */
+        searchCustomer: function() {
+             this.$modal.show(
+                CustomerSearchModal, {
+                    customer: this.customer,
+                    selectedTools: this.selectTools,
+                }, 
+                {
+			        width: "480px",
+					height: "auto",
+					scrollable: true
+                }, 
+                {
+			        name: 'CustomerSearchModal',
+					clickToClose: false,
+					transition:true
+			    }
+		    );
+        },
+
         /* 견적내기 (견적서 포맷 나옴) */
         showEstimate: function () {
-
-            this.estimateModel.spidId = this.sender.spidId;
-            this.estimateModel.estimatePrice = 0;
 
             this.$modal.show(
                 Estimatemodal, {
                     selectedTools: this.selectTools,
                     sender: this.sender,
-                    estimateModel: this.estimateModel
+                    customer: this.customer
                 }, 
                 {
 			        width: "794px",
@@ -260,6 +276,16 @@ export default {
                 , 1 // 지울 갯수
                 , tool // 채울 것
             );
+        },
+
+        deleteCustomer: function () {
+            if (confirm("선택한 고객사를 초기화하겠습니까?")) {
+                this.customer.customerId = null;
+                this.customer.customerCompany = null;
+                this.customer.customerName = null;
+                this.customer.customerTel = null;
+                this.customer.customerEmail = null;
+            }
         }
     },
 

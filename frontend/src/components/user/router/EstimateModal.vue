@@ -1,7 +1,6 @@
 <template>
     <div id="pdf">
         <!-- 타이틀 -->
-        {{estimateModel}}
         <div class="title">
             견 적 서
         </div>
@@ -187,18 +186,11 @@ import NoteEditModal from '../edit/NoteEditModal.vue';
 export default {
     name: 'estimate-modal',
 
-    props: ['selectedTools', 'sender'],
+    props: ['selectedTools', 'sender', 'customer'],
 
     data() {
         return {
             propTitle: 'MY_PDF',
-            customer: {
-                customerId: null,
-                customerCompany: null,
-                customerName: null,
-                customerTel: null,
-                customerEmail: null
-            },
 
             estimateModel: {
                 estimateId: null,

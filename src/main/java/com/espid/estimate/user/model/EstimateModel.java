@@ -1,6 +1,7 @@
 package com.espid.estimate.user.model;
 
 import java.util.Date;
+import java.util.List;
 
 import lombok.Data;
 
@@ -27,4 +28,6 @@ public class EstimateModel {
 
     /* 고객사 아이디 */
     private Integer customerId;
+
+    private List<EstimateDetailModel> estimateDetailModels;
 }

@@ -65,7 +65,7 @@
 export default {
     name: 'customer-search-modal',
 
-    props: ['customer'],
+    props: ['customer', 'selectedTools'],
 
     data() {
         return {
@@ -78,12 +78,19 @@ export default {
     methods: {
         searchCustomer: function() {
             if (this.search.length > 0) {
-                axios.get('/api/customer', {
+
+                let tool = []
+
+                /*  */
+                if (this.selectedTools) {
+                    this.selectedTools.forEach(t => {
+                        tool.push({toolName: t.toolName, toolLicense: t.toolLicense});
+                    });
+                }
+
+                axios.post('/api/customer', tool, {             
                     "params": {
                         search: this.search
-                    },
-                    "headers": {
-                        'Content-Type': 'application/JSON; charset=UTF-8'
                     }
                 }).then((response) => {
                     this.customers = response.data;
@@ -94,7 +101,7 @@ export default {
         },
 
         selectCustomer: function (customer) {
-            this.tmpCustomer = customer;
+            this.tmpCustomer = JSON.parse(JSON.stringify(customer));
         },
 
         save: function() {
@@ -103,6 +110,9 @@ export default {
             this.customer.customerName = this.tmpCustomer.customerName;
             this.customer.customerTel = this.tmpCustomer.customerTel;
             this.customer.customerEmail = this.tmpCustomer.customerEmail;
+
+            this.customer.estimateModels = this.tmpCustomer.estimateModels;
+            
             this.$emit('close');
         }
     },
