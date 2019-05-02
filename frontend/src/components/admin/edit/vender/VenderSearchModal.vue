@@ -82,9 +82,6 @@ export default {
                 axios.get('/admin/vender', {
                     "params": {
                         search: this.search
-                    },
-                    "headers": {
-                        'Content-Type': 'application/JSON; charset=UTF-8'
                     }
                 }).then((response) => {
                     this.venders = response.data;

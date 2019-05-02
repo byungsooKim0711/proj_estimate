@@ -20,6 +20,8 @@ Vue.use(require('vue-moment'), {
 
 /* axios */
 window.axios = require('axios')
+axios.defaults.headers.post['Content-Type'] = 'application/JSON; charset=UTF-8';
+axios.defaults.headers.get['Content-Type'] = 'application/JSON; charset=UTF-8';
 
 axios.interceptors.response.use((response) => {
   return response;

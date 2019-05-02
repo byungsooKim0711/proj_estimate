@@ -82,9 +82,6 @@ export default {
                 axios.get('/admin/sender', {
                     "params": {
                         search: this.search
-                    },
-                    "headers": {
-                        'Content-Type': 'application/JSON; charset=UTF-8'
                     }
                 }).then((response) => {
                     this.senders = response.data;
