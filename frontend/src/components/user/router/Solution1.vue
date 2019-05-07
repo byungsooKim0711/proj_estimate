@@ -39,9 +39,7 @@
                             <thead>
                                 <tr>
                                     <th>도구이름</th>
-                                    <!-- <th>모델번호</th> -->
                                     <th>라이센스</th>
-                                    <!-- <th>상세정보</th> -->
                                     <th>가격</th>
                                     <th>작업</th>
                                 </tr>
@@ -49,12 +47,11 @@
                             <tbody>
                                 <tr v-for="tool in conditionalToolList" :key="tool.id">
                                     <td>{{tool.toolName}}</td>
-                                    <!-- <td>{{tool.toolModelNumber}}</td> -->
                                     <td>{{tool.toolLicense}}</td>
-                                    <!-- <td>{{tool.toolDetails}}</td> -->
                                     <td><span v-for="price in tool.priceList" :key="price.id">{{price.quantity + "개: "}} {{price.krw | priceWithCommas}}&nbsp;&nbsp;</span></td>
                                     <td>
-                                        <em class="btn txtGreen02" @click="selectTool(tool)">추가</em>
+                                        <em class="btn txtNavy" @click="selectTool(tool)">신규</em>
+                                        <em class="btn txtGreen02">업그레이드</em>
                                         <em class="btn txtBrown" @click="selectToolMaintenance(tool)">유지보수</em>
                                     </td>
                                 </tr>
@@ -107,7 +104,7 @@
                                         <td>{{tool.priceList[0].krw | priceWithCommas}}</td>
                                         <td><input type="number" min="1" v-model.number="tool.quantity" @keydown.enter="calc(tool)"/></td>
                                         <td><input type="number" min="0" max="100" v-model="tool.discountRate" @keydown.enter="calc(tool)"/></td>
-                                        <td><input v-model="tool.startMaintenance" type="date" @keydown.enter="calc(tool)"/><input v-model="tool.endMaintenance" type="date" @keydown.enter="calc(tool)"/></td>
+                                        <td><input v-model="tool.startMaintenance" type="date" @keydown.enter="calc(tool)" :disabled="!tool.toolName.includes('Maintenance')"/><input v-model="tool.endMaintenance" type="date" @keydown.enter="calc(tool)" :disabled="!tool.toolName.includes('Maintenance')"/></td>
                                         <td>{{tool.suggestPrice | priceWithCommas}}</td>
                                         <td>
                                             <em class="btn txtRed" @click="deleteTool(index)">삭제</em>
@@ -126,6 +123,8 @@
 <script>
 import Estimatemodal from './EstimateModal.vue';
 import CustomerSearchModal from '../edit/CustomerSearchModal.vue';
+import Vue from 'vue';
+import utilAlgorithm from '../../util/utilAlgorithm.js';
 
 export default {
     name: 'solution1',
@@ -157,7 +156,7 @@ export default {
 
     filters: {
         priceWithCommas: function (price) {
-            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+            return utilAlgorithm.utilAlgorithm.priceWithCommas(price) + "원";
         },
     },
 
@@ -197,8 +196,8 @@ export default {
                 this.originToolList.forEach(tool => {
                     tool.checked = false;
                     tool.checkedMaintenance = false;
-                    tool.startMaintenance = new Date().toISOString().slice(0, 10);
-                    tool.endMaintenance = new Date().toISOString().slice(0, 10);
+                    tool.startMaintenance = this.$moment(new Date()).format("YYYY-MM-DD");
+                    tool.endMaintenance = this.$moment(new Date()).format("YYYY-MM-DD");
                     this.venderList.forEach(vender => {
                         if (vender.venderId == tool.venderId) {
                             tool.venderName = vender.venderName;
@@ -230,12 +229,9 @@ export default {
                     tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.05);
                     // tool.rate = 40
                 }
-                
-                /* 일수만큼 돈 계산 */
-                let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
-                tool.suggestPrice = (tool.suggestPrice/365) * diff;
 
-                tool.suggestPrice = this.roundUp(tool.suggestPrice, 4);
+                tool.suggestPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
+                tool.originPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
 
                 tool.checked = true;
                 this.selectTools.push(tool);
@@ -245,6 +241,7 @@ export default {
         selectToolMaintenance: function (tool) {
             /* Deep copy는 비효율적이니 immutable update pattern을 사용 하라는 지적... (immutable update pattern 이란 ?) */
             let tmpTool = JSON.parse(JSON.stringify(tool));
+            tmpTool.discountRate = 0;
 
             if (tool.checkedMaintenance == false) {
                 tmpTool.quantity = 1;
@@ -281,7 +278,8 @@ export default {
                 let diff = this.dateDiffIndays(tmpTool.startMaintenance, tmpTool.endMaintenance);
                 tmpTool.suggestPrice = (tmpTool.suggestPrice/365) * diff;
 
-                tmpTool.suggestPrice = this.roundUp(tmpTool.suggestPrice, 4);
+                tmpTool.suggestPrice = utilAlgorithm.utilAlgorithm.roundUp(tmpTool.suggestPrice, 4);
+                tmpTool.originPrice = utilAlgorithm.utilAlgorithm.roundUp(tmpTool.suggestPrice, 4);
 
                 this.selectTools.push(tmpTool);
                 tool.checkedMaintenance = true;
@@ -317,7 +315,7 @@ export default {
 
         /* 고객사 검색 */
         searchCustomer: function() {
-             this.$modal.show(
+            this.$modal.show(
                 CustomerSearchModal, {
                     customer: this.customer,
                     selectedTools: this.selectTools,
@@ -365,27 +363,40 @@ export default {
 
             let venderName = tool.venderName;
 
-            let toolHistoryQuantity = 0;
-
+            /*
+                // 배열에 [{toolName, toolLicense, quantity, startMaintenance, endMaintenance}, ... {}] 저장
+            */
+            let arr = [];
             if (this.customer.customerId != null) {
                 this.customer.estimateModels.forEach(e => {
                     e.estimateDetailModels.forEach(d => {
-                        this.selectTools.forEach(t => {
-                            if (d.toolName == t.toolName && d.toolLicense == t.toolLicense) {
-                                if (d.toolName.includes("Maintenance")) {
+                        if (tool.toolName.includes(d.toolName) && d.toolLicense == tool.toolLicense) {
+                            if (d.toolName.includes("Maintenance")) {
+                                let index = arr.findIndex(find => find.toolName == tool.toolName && find.toolLicense == tool.toolLicense);
+                                if (index >= 0) {
+                                    arr[index].quantity += d.quantity;
                                     
+                                    arr[index].startMaintenance = d.startMaintenance;
+                                    arr[index].endMaintenance = d.endMaintenance;
                                 } else {
-                                    toolHistoryQuantity += d.quantity;
-                                }  
-                            }
-                        })
+                                    arr.push({toolName: d.toolName, toolLicense: d.toolLicense, quantity: d.quantity, startMaintenance: d.startMaintenance, endMaintenance: d.endMaintenance});
+                                }
+                            } else {
+                                let index = arr.findIndex(find => find.toolName == tool.toolName && find.toolLicense == tool.toolLicense);
+                                if (index >= 0) {
+                                    arr[index].quantity += d.quantity;
+                                } else {
+                                    arr.push({toolName: d.toolName, toolLicense: d.toolLicense, quantity: d.quantity, startMaintenance: d.startMaintenance, endMaintenance: d.endMaintenance});
+                                }
+                            }  
+                        }
                     });
                 });
             }
 
-            console.log(this.customer);
+            if (arr.findIndex(find => find.toolName == tool.toolName && find.toolLicense == tool.toolLicense) >= 0) {
+                let index = arr.findIndex(find => find.toolName == tool.toolName && find.toolLicense == tool.toolLicense);
 
-            if (toolHistoryQuantity != 0) {
                 if (venderName === 'ISOGRAPH') {
                     if (tool.quantity === 1) {
                         tool.suggestPrice = (tool.priceList[0].eur * tool.priceList[0].exchangeRate);
@@ -400,21 +411,21 @@ export default {
                     if (tool.toolLicense.includes("Local")) {
                         tool.suggestPrice = (tool.quantity * tool.priceList[0].eur * tool.priceList[0].exchangeRate * 1.35);
                     } else {
-                        if((tool.quantity+toolHistoryQuantity) >= 1 && (tool.quantity+toolHistoryQuantity) <= 5) {
+                        if((tool.quantity+arr[index].quantity) >= 1 && (tool.quantity+arr[index].quantity) <= 5) {
                             tool.suggestPrice = 
-                                (tool.priceList[tool.quantity+toolHistoryQuantity-1].eur * tool.priceList[tool.quantity+toolHistoryQuantity-1].exchangeRate * 1.35)
-                                - (tool.priceList[toolHistoryQuantity-1].eur * tool.priceList[toolHistoryQuantity-1].exchangeRate * 1.35);
-                        } else if ((tool.quantity+toolHistoryQuantity) >= 6) {
+                                (tool.priceList[tool.quantity+arr[index].quantity-1].eur * tool.priceList[tool.quantity+arr[index].quantity-1].exchangeRate * 1.35)
+                                - (tool.priceList[arr[index].quantity-1].eur * tool.priceList[arr[index].quantity-1].exchangeRate * 1.35);
+                        } else if ((tool.quantity+arr[index].quantity) >= 6) {
                             
-                            let diff = (tool.quantity+toolHistoryQuantity) - 5;
+                            let diff = (tool.quantity+arr[index].quantity) - 5;
 
-                            if (toolHistoryQuantity >= 6) {
+                            if (arr[index].quantity >= 6) {
                                 tool.suggestPrice = (tool.priceList[5].eur * tool.priceList[5].exchangeRate * 1.35) * tool.quantity;
                             } else {
                                 tool.suggestPrice = (tool.priceList[4].eur * tool.priceList[4].exchangeRate * 1.35);
                                 tool.suggestPrice += (tool.priceList[5].eur * tool.priceList[4].exchangeRate * 1.35) * diff;
     
-                                tool.suggestPrice -= (tool.priceList[toolHistoryQuantity-1].eur * tool.priceList[toolHistoryQuantity-1].exchangeRate * 1.35);
+                                tool.suggestPrice -= (tool.priceList[arr[index].quantity-1].eur * tool.priceList[arr[index].quantity-1].exchangeRate * 1.35);
                             }
                         }
                     }
@@ -454,7 +465,6 @@ export default {
                 }
             }
 
-
             /* 유지보수 일 때 */
             /*
                 제품                   | 유지보수
@@ -462,7 +472,26 @@ export default {
                 CARM server               0.23
                 CSS Module / CSA Modul    0.18 
             */
+
             if (tool.toolName.includes("Maintenance")) {
+                let index = arr.findIndex(find => find.toolName == tool.toolName && find.toolLicense == tool.toolLicense);
+                if (index >= 0) {
+                    // 마지막 유지보수가 2019-04-30 이면, 2019-05-01 부터 시작하도록.
+                    tool.startMaintenance = this.$moment(new Date(arr[index].endMaintenance)).add(1, 'days').format('YYYY-MM-DD');
+                } else {
+                    // 유지보수를 한번도 안했을 때
+                    let name = tool.toolName.replace(" Maintenance", "");
+                    let license = tool.toolLicense;
+
+                    // 해당 도구를 찾아서
+                    let elseIndex = arr.findIndex(find => find.toolName == name && find.toolLicense == license);
+
+                    // 도구 구매날짜를 유지보수 시작 날짜로 설정
+                    if (elseIndex >= 0) {
+                        tool.startMaintenance = this.$moment(new Date(arr[elseIndex].endMaintenance)).format("YYYY-MM-DD");
+                    }
+
+                }
                 if (tool.venderName === 'APIS') {
                     if (tool.toolName.includes("IQ")) {
                         tool.suggestPrice *= 0.15;
@@ -474,40 +503,25 @@ export default {
                 } else if (tool.venderName == 'ISOGRAPH') {
                     tool.suggestPrice *= 0.15;
                 } else if (tool.venderName == 'OMNEX') {
-    
+                    
                 }
+
+                /* 일수만큼 돈 계산 [유지보수 만] */
+                let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
+                tool.suggestPrice = (tool.suggestPrice/365) * diff;
             }
 
-            /* 일수만큼 돈 계산 */
-            let diff = this.dateDiffIndays(tool.startMaintenance, tool.endMaintenance);
-            tool.suggestPrice = (tool.suggestPrice/365) * diff;
-
+            /* 단가 + 5% 적용 */
+            tool.suggestPrice = tool.suggestPrice * 1.05
+            
             /* 할인율 적용 */
+            tool.originPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
             tool.suggestPrice = tool.suggestPrice * (1-tool.discountRate/100);
 
             /* round up */
-            tool.suggestPrice = this.roundUp(tool.suggestPrice * 1.05, 4);
+            tool.suggestPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
 
-            /* 분명 좋은 방법이 아니니까 나중에 다시 변경하도록 ! */
-            this.selectTools.splice(
-                  this.selectTools.findIndex(t => t == tool  /* t.toolId == tool.toolId && t.toolName == tool.toolName */) // 시작위치
-                , 1 // 지울 갯수
-                , tool // 채울 것
-            );
-        },
-
-        roundUp: function(number, digit) {
-
-            if(Math.ceil(number).toString().length <= digit) {
-                return number;
-            }
-
-            let div = 1;
-            for (let i=0; i<digit; i++) {
-                div = div * 10;
-            }
-            
-            return Math.ceil(number/div)*div;
+            Vue.set(this.selectTools, this.selectTools.findIndex(t => t == tool), tool);
         },
 
         /* date1과 date2의 일 수 차이를 구함 */
@@ -537,12 +551,5 @@ export default {
 </script>
 
 <style scoped>
-.info .type08 {
-    float: right
-}
-.type08 th {
-    text-align: right;
-    width: 100px;
-    padding-right: 20px;
-}
+
 </style>

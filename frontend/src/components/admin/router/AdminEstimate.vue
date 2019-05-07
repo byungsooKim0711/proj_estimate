@@ -82,6 +82,8 @@
 import { mapGetters } from 'vuex';
 import AdminEstimateModal from '../edit/estimate/AdminEstimateModal.vue';
 
+import utilAlgorithm from '../../util/utilAlgorithm.js';
+
 export default {
     name: 'admin-estimate',
 
@@ -93,7 +95,7 @@ export default {
 	
 	filters: {
 		priceWithCommas: function (price) {
-            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+            return utilAlgorithm.utilAlgorithm.priceWithCommas(price) + "원";
         },
 	},
 
@@ -124,7 +126,7 @@ export default {
             search: '',
 			_timer: 5000,
 			from: '2018-01-01',
-			to: new Date().toISOString().slice(0, 10)
+			to: this.$moment(new Date()).format("YYYY-MM-DD")
         }
     },
 

@@ -84,7 +84,7 @@ export default {
                 /*  */
                 if (this.selectedTools) {
                     this.selectedTools.forEach(t => {
-                        tool.push({toolName: t.toolName, toolLicense: t.toolLicense});
+                        tool.push({toolName: t.toolName.replace(" Maintenance", ""), toolLicense: t.toolLicense});
                     });
                 }
 

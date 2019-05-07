@@ -26,6 +26,7 @@
         <result property="estimateId" column="estimate_id"/>
         <result property="title" column="title"/>
         <result property="estimatePrice" column="estimate_price"/>
+        <result property="estimateOriginPrice" column="estimate_origin_price"/>
         <result property="spidId" column="spid_id"/>
         <result property="estimateDate" column="estimate_date"/>
         <result property="estimateNote" column="estimate_note"/>
@@ -115,6 +116,7 @@
                   estimate_id
                 , title
                 , estimate_price
+                , estimate_origin_price
                 , spid_id
                 , estimate_date
                 , estimate_note
@@ -124,6 +126,7 @@
               #{estimateId}
             , #{title}
             , #{estimatePrice}
+            , #{estimateOriginPrice}
             , #{spidId}
             , #{estimateDate}
             , #{estimateNote}
@@ -205,6 +208,7 @@
               estimate.estimate_id
             , title
             , estimate_price
+            , estimate_origin_price
             , spid_id
             , estimate_date
             , estimate_note
@@ -227,7 +231,7 @@
             AND customer_id = #{customerId} 
             AND (
             <foreach item="item" collection="list" separator="OR" open="(" close=")">
-                tool_name = #{item.toolName} AND tool_license = #{item.toolLicense}
+                tool_name LIKE CONCAT(#{item.toolName}, '%') AND tool_license = #{item.toolLicense}
             </foreach>
             )
     </select>

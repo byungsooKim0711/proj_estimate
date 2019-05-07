@@ -73,6 +73,8 @@ import { mapGetters } from 'vuex';
 import PriceInsertModal from '../edit/price/PriceInsertModal.vue';
 import PriceUpdateModal from '../edit/price/PriceUpdateModal.vue';
 
+import utilAlgorithm from '../../util/utilAlgorithm.js';
+
 export default {
     name: 'admin-price',
 
@@ -93,7 +95,7 @@ export default {
     filters: {
         priceWithCommas: function (price) {
 			if (price) {
-				return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				return utilAlgorithm.utilAlgorithm.priceWithCommas(price);
 			}
 		}
     },

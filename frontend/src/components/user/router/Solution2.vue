@@ -123,6 +123,8 @@
 <script>
 import Estimatemodal from './EstimateModal.vue';
 import CustomerSearchModal from '../edit/CustomerSearchModal.vue';
+import Vue from 'vue';
+import utilAlgorithm from '../../util/utilAlgorithm.js';
 
 export default {
     name: 'solution2',
@@ -153,7 +155,7 @@ export default {
 
     filters: {
         priceWithCommas: function (price) {
-            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + "원";
+            return utilAlgorithm.utilAlgorithm.priceWithCommas(price);
         },
     },
 
@@ -210,7 +212,9 @@ export default {
             if (tool.checked == false) {
                 tool.quantity = 1;
                 tool.discountRate = 25;
+                tool.originPrice = (tool.quantity * tool.priceList[0].krw);
                 tool.suggestPrice = (tool.quantity * (1-tool.discountRate/100) * tool.priceList[0].krw);
+                tool.suggestPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
                 this.selectTools.push(tool);
                 tool.checked = !tool.checked;
             }
@@ -269,13 +273,10 @@ export default {
         },
 
         calc: function (tool) {
-            /* 분명 좋은 방법이 아니니까 나중에 다시 변경하도록 ! */
             tool.suggestPrice = (tool.quantity * (1-tool.discountRate/100) * tool.priceList[0].krw);
-            this.selectTools.splice(
-                  this.selectTools.findIndex(t => t == tool) // 시작위치
-                , 1 // 지울 갯수
-                , tool // 채울 것
-            );
+            tool.suggestPrice = utilAlgorithm.utilAlgorithm.roundUp(tool.suggestPrice, 4);
+
+            Vue.set(this.selectTools, this.selectTools.findIndex(t => t == tool), tool);
         },
 
         deleteCustomer: function () {

@@ -120,10 +120,14 @@
                         <td>{{tool.toolDetails}}</td>
                         <td class="center">{{tool.priceList[0].krw | priceWithCommas}}</td>
                         <td class="center">{{tool.quantity}}</td>
-                        <td class="right">{{tool.suggestPrice | priceWithCommas}}</td>
+                        <td class="right">{{tool.originPrice | priceWithCommas}}</td>
                     </tr>
-                    <tr class="backgry">
-                        <td class="center bold" colspan="6">제안가 (할인적용, VAT 별도)</td>                        
+                    <tr class="backgry1">
+                        <td class="center bold" colspan="6">합계 금액 (VAT 별도)</td>                        
+                        <td class="right bold">{{estimateModel.estimateOriginPrice | priceWithCommas}}</td>
+                    </tr>
+                    <tr class="backgry2" v-if="estimateModel.estimateOriginPrice != estimateModel.estimatePrice">
+                        <td class="center bold" colspan="6">할인 적용 공급가 (VAT 별도)</td>                        
                         <td class="right bold">{{estimateModel.estimatePrice | priceWithCommas}}</td>
                     </tr>
                 </tbody>
@@ -183,6 +187,8 @@ import RecipientEditModal from '../edit/RecipientEditModal.vue';
 import TitleEditModal from '../edit/TitleEditModal.vue';
 import NoteEditModal from '../edit/NoteEditModal.vue';
 
+import utilAlgorithm from '../../util/utilAlgorithm.js';
+
 export default {
     name: 'estimate-modal',
 
@@ -196,6 +202,7 @@ export default {
                 estimateId: null,
                 title: null,
                 estimatePrice: 0,
+                estimateOriginPrice: 0,
                 spidId: null,
                 estimateDate: new Date(),
                 estimateNote: '',
@@ -209,6 +216,7 @@ export default {
 
         this.selectedTools.forEach(t => {
             this.estimateModel.estimatePrice += t.suggestPrice;
+            this.estimateModel.estimateOriginPrice += t.originPrice;
 
             if (t.toolDetails == null || t.toolDetails == '') {
                 t.toolDetails = t.toolName + " " + t.toolLicense + " (" + t.quantity + "User" + ") ";
@@ -225,6 +233,15 @@ export default {
         save: function () {
 
             this.estimateModel.customerId = this.customer.customerId;
+
+            if ((this.customer.customerCompany == '' || this.customer.customerCompany == null) ||
+                (this.customer.customerName == '' || this.customer.customerName == null) ||
+                (this.customer.customerTel == '' || this.customer.customerTel == null) ||
+                (this.customer.customerEmail == '' || this.customer.customerEmail == null)) {
+                
+                alert("고객사 정보를 모두 입력하세요.");
+                return;
+            }
 
             /* 견적 상세 내용 */
             let estimateDetailModels = []
@@ -367,56 +384,12 @@ export default {
     filters: {
         /* 19940711 -> 19,940,711 */
         priceWithCommas: function (price) {
-            return Math.floor(price).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+            return utilAlgorithm.utilAlgorithm.priceWithCommas(price);
         },
 
         /* 19,940,711 -> 일금 일천구백구십사만칠백십일원정 */
         number2Kor : function( strNumber ) { 
-            strNumber = Math.floor(strNumber).toString();
-            strNumber = strNumber.replace(new RegExp(",", "g"), "");
-
-            var arrayAmt = new Array("일", "이", "삼", "사", "오", "육", "칠", "팔", "구", "십"); 
-            var arraypos = new Array("", "십", "백", "천"); 
-            var arrayUnit = new Array("", "만", "억", "조", "경", "해");
- 
-            var pos = strNumber.length%4; 
-            var len = (strNumber.length/4).toString();
-            if( len.indexOf(".") > 0 )  {
-                var unit = len.substring(0, len.indexOf("."));
-            }
-            else {
-                var unit = strNumber.length/4-1;
-            }
-
-            var korNumber = "일금 "; 
-            var op = 0;
-
-            for(let i=0; i<strNumber.length; i++ ) { 
-                if(pos==0) {
-                    pos=4;
-                } 
-                var num = parseInt( strNumber.substring( i, i+1 ) ); 
-                if( num != 0 ) { 
-                    korNumber += arrayAmt[ num-1 ]; 
-                    korNumber += arraypos[ pos-1 ]; 
-                    op=1; 
-                } 
-                if(pos == 1) { 
-                    if(op == 1) {
-                        korNumber += arrayUnit[unit]; 
-                    } 
-                    unit--; 
-                    op = 0; 
-                } 
-                pos--; 
-            }
-
-            if (korNumber.length == 0 || korNumber.length == null) {
-                return  ""; 
-            }
-            else {
-                return korNumber + "원정" ; 
-            } 
+            return utilAlgorithm.utilAlgorithm.number2Kor(strNumber);
         } 
     }
 }
@@ -603,8 +576,12 @@ export default {
     right: 250px;
     background:url(../../../assets/icon/이승주_대표님_직인1.png) no-repeat 50%;
 }
-.backgry {
+.backgry1 {
     background-color: #f0f0f0;
+}
+
+.backgry2 {
+    background-color: #d3d3d3;
 }
 .center {
     text-align: center;

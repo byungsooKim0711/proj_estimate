@@ -8,6 +8,7 @@
               estimate_id
             , title
             , estimate_price
+            , estimate_origin_price
             , estimate_date
             , estimate_note
             , sender.spid_id
@@ -43,6 +44,7 @@
               estimate_id
             , title
             , estimate_price
+            , estimate_origin_price
             , customer_id
             , spid_id
             , estimate_date
