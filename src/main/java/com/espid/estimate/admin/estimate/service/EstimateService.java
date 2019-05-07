@@ -21,7 +21,7 @@ public class EstimateService {
     }
 
     public Estimate findEstimateById(int estimateId) throws Exception {
-        return estimateMapper.findEstimateById(estimateId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return estimateMapper.findEstimateById(estimateId).orElseThrow(() -> new ResourceNotFoundException("Estimate resource not found with ID: " + estimateId));
     }
 
     public List<EstimateDetail> findEstimateDetailByEstimateId(int estimateId) throws Exception {

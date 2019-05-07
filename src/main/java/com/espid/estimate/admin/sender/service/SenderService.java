@@ -25,7 +25,7 @@ public class SenderService {
      * @throws ResourceNotFoundException
       */
     public Sender findSenderById(int senderId) throws Exception {
-        return senderMapper.findSenderById(senderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return senderMapper.findSenderById(senderId).orElseThrow(() -> new ResourceNotFoundException("Sender resource not found with ID: " + senderId));
     }
 
     public Sender insertSender(Sender sender) throws Exception {

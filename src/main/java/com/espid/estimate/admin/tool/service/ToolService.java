@@ -26,7 +26,7 @@ public class ToolService {
      * @throws ResourceNotFoundException
       */
     public Tool findToolById(int toolId) throws Exception {
-        return toolMapper.findToolById(toolId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return toolMapper.findToolById(toolId).orElseThrow(() -> new ResourceNotFoundException("Tool resource not found with ID: " + toolId));
     }
 
     public Tool insertTool(Tool tool) throws Exception {

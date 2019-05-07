@@ -25,7 +25,7 @@ public class VenderService {
      * @throws ResourceNotFoundException
       */
     public Vender findVenderById(int venderId) throws Exception {
-        return venderMapper.findVenderById(venderId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return venderMapper.findVenderById(venderId).orElseThrow(() -> new ResourceNotFoundException("Vender resource not found with ID: " + venderId));
     }
 
     public Vender insertVender(Vender vender) throws Exception {

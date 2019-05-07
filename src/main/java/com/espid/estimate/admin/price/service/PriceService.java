@@ -26,7 +26,7 @@ public class PriceService {
      * @throws ResourceNotFoundException
       */
     public Price findPriceById(int priceId) throws Exception {
-        return priceMapper.findPriceById(priceId).orElseThrow(() -> new ResourceNotFoundException("Resource not found"));
+        return priceMapper.findPriceById(priceId).orElseThrow(() -> new ResourceNotFoundException("Price resource not found with ID: " + priceId));
     }
 
     public Price insertPrice(Price price) throws Exception {
