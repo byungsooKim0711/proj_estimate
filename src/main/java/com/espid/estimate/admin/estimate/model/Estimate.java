@@ -13,8 +13,11 @@ public class Estimate {
     /* 견적서 제목 */
     private String title;
 
-    /* 총 견적금액 */
+    /* 총 견적금액 (할인 포함)*/
     private int estimatePrice;
+
+    /* 할인 전 금액 */
+    private int estimateOriginPrice;
 
     /* 견적 날짜*/
     private Date estimateDate;

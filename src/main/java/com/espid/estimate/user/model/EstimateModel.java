@@ -14,8 +14,11 @@ public class EstimateModel {
     /* 견적서 제목 */
     private String title;
 
-    /* 총 견적금액 */
+    /* 총 견적금액 (할인율 포함) */
     private int estimatePrice;
+
+    /* 할인 전 금액 */
+    private int estimateOriginPrice;
 
     /* 발신인 정보 */
     private Integer spidId;

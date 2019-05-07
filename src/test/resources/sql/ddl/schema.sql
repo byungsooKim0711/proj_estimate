@@ -59,13 +59,14 @@ ALTER TABLE TOOL
 -- ESTIMATE Table Create SQL
 CREATE TABLE ESTIMATE
 (
-     ESTIMATE_ID      INT             NOT NULL    AUTO_INCREMENT, -- COMMENT  견적서 번호 , 
-     TITLE            VARCHAR(45)     NULL, --        COMMENT  제목 , 
-     ESTIMATE_PRICE   INT             NULL, --        COMMENT  총 견적금액 , 
-     SPID_ID          INT             NULL, --        COMMENT  발신인 아이디 , 
-     ESTIMATE_DATE    DATETIME        NULL, --        COMMENT  견적날짜 , 
-     ESTIMATE_NOTE    VARCHAR(300)    NULL, --        COMMENT  비고 , 
-     CUSTOMER_ID      INT             NULL, --        COMMENT  고객사 아이디 , 
+     ESTIMATE_ID            INT             NOT NULL    AUTO_INCREMENT, -- COMMENT  견적서 번호 , 
+     TITLE                  VARCHAR(45)     NULL, --        COMMENT  제목 , 
+     ESTIMATE_PRICE         INT             NULL, --        COMMENT  총 견적금액 , 
+     ESTIMATE_ORIGIN_PRICE  INT             NULL, --        COMMENT '할인 전 견적 금액', 
+     SPID_ID                INT             NULL, --        COMMENT  발신인 아이디 , 
+     ESTIMATE_DATE          DATETIME        NULL, --        COMMENT  견적날짜 , 
+     ESTIMATE_NOTE          VARCHAR(300)    NULL, --        COMMENT  비고 , 
+     CUSTOMER_ID            INT             NULL, --        COMMENT  고객사 아이디 , 
     PRIMARY KEY (ESTIMATE_ID)
 );
 
