@@ -87,7 +87,7 @@ CREATE TABLE PRICE
      EXCHANGE_RATE   FLOAT    NULL, --        COMMENT  환율 , 
      TOOL_ID         INT      NULL, --        COMMENT  도구 아이디 , 
      EUR             FLOAT    NULL, --        COMMENT  원가(EUR) , 
-     QUANTITY        INT      NULL, --        DEFAULT 1 COMMENT  개수 , 
+     QUANTITY        INT      NULL        DEFAULT 1, -- COMMENT  개수 , 
     PRIMARY KEY (PRICE_ID)
 );
 
@@ -111,6 +111,9 @@ CREATE TABLE ESTIMATE_DETAIL
      END_MAINTENANCE      DATE            NULL, --        COMMENT  유지보수 끝 , 
      TOOL_NAME            VARCHAR(100)    NULL, --        COMMENT  도구이름 , 
      TOOL_LICENSE         VARCHAR(45)     NULL, --        COMMENT  라이센스(단위) , 
+     UPGRADE              CHAR(1)         NULL        DEFAULT 'X', -- COMMENT '업그레이드', 
+     BEFORE_TOOL_NAME     VARCHAR(100)    NULL        DEFAULT NULL, -- COMMENT '업그레이드 전 도구 이름', 
+     UPGRADE_QUANTITY     INT             NULL        DEFAULT 0, -- COMMENT '업그레이드된 개수', 
     PRIMARY KEY (ESTIMATE_DETAIL_ID)
 );
 

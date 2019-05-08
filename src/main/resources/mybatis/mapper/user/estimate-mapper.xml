@@ -45,6 +45,9 @@
             <result property="endMaintenance" column="end_maintenance"/>
             <result property="toolName" column="tool_name"/>
             <result property="toolLicense" column="tool_license"/>
+            <result property="upgrade" column="upgrade"/>
+            <result property="beforeToolName" column="before_tool_name"/>
+            <result property="upgradeQuantity" column="upgrade_quantity"/>
         </collection>
     </resultMap>
 
@@ -149,6 +152,9 @@
                 , end_maintenance
                 , tool_license
                 , tool_name
+                , upgrade
+                , before_tool_name
+                , upgrade_quantity
             )
         VALUES 
         <foreach collection="list" item="item" separator=",">
@@ -165,6 +171,9 @@
                 , #{item.endMaintenance}
                 , #{item.toolLicense}
                 , #{item.toolName}
+                , #{item.upgrade}
+                , #{item.beforeToolName}
+                , #{item.upgradeQuantity}
             )
         </foreach> 
     </insert>
@@ -224,6 +233,9 @@
             , end_maintenance
             , tool_name
             , tool_license
+            , upgrade
+            , before_tool_name
+            , upgrade_quantity
         FROM
             estimate, estimate_detail
         WHERE

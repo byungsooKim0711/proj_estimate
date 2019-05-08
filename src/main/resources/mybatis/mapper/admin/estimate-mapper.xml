@@ -69,6 +69,9 @@
             , end_maintenance
             , tool_license
             , tool_name
+            , upgrade
+            , before_tool_name
+            , upgrade_quantity
         FROM
             estimate_detail
         WHERE
