@@ -77,7 +77,7 @@
                     </tr>
                     <tr>
                         <th scope="row">견적금액(VAT별도)</th>
-                        <td>{{estimate.estimatePrice | number2Kor}} ({{estimate.estimatePrice | priceWithCommas}})</td>
+                        <td>{{estimate.estimatePrice | number2Kor}} (￦{{estimate.estimatePrice | priceWithCommas}})</td>
                     </tr>
                 </tbody>
             </table>
