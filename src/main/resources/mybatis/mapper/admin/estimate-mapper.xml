@@ -71,6 +71,7 @@
             , tool_name
             , upgrade
             , before_tool_name
+            , before_tool_license
             , upgrade_quantity
         FROM
             estimate_detail

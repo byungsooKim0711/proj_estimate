@@ -58,8 +58,8 @@ public class UserEstimateController {
         return new ResponseEntity<>(estimateWholeModel, headers, HttpStatus.CREATED);
     }
 
-    @PostMapping("/customer")
-    public List<CustomerModel> getCustomers(@RequestParam(name = "search") String search, @RequestBody List<ToolNameAndLicense> test) throws Exception {
-        return userEstimateService.selectCustomers(search, test);
+    @GetMapping("/customer")
+    public List<CustomerModel> getCustomers(@RequestParam(name = "search") String search) throws Exception {
+        return userEstimateService.selectCustomers(search);
     }
 }

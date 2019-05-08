@@ -32,5 +32,5 @@ public interface UserEstimateMapper {
 
     public int insertcustomer(CustomerModel customer) throws Exception;
 
-    public List<EstimateModel> selectEstimateByCustomerId(int customerId, @Param("list") List<ToolNameAndLicense> toolNameAndLicemse);
+    public List<EstimateModel> selectEstimateByCustomerId(int customerId);
 }

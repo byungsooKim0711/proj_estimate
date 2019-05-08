@@ -73,11 +73,11 @@ public class UserEstimateService {
         return userEstimateMapper.saveEstimateDetail(estimateDetailModels);
     }
 
-    public List<CustomerModel> selectCustomers(String search, List<ToolNameAndLicense> test) throws Exception {
+    public List<CustomerModel> selectCustomers(String search) throws Exception {
         List<CustomerModel> customerModels = userEstimateMapper.selectCustomers(search);
 
         customerModels.forEach(c -> {
-            c.setEstimateModels(userEstimateMapper.selectEstimateByCustomerId(c.getCustomerId(), test));
+            c.setEstimateModels(userEstimateMapper.selectEstimateByCustomerId(c.getCustomerId()));
         });
 
         return customerModels;

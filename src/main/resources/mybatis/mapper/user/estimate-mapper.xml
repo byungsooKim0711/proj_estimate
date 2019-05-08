@@ -47,6 +47,7 @@
             <result property="toolLicense" column="tool_license"/>
             <result property="upgrade" column="upgrade"/>
             <result property="beforeToolName" column="before_tool_name"/>
+            <result property="beforeToolLicense" column="before_tool_license"/>
             <result property="upgradeQuantity" column="upgrade_quantity"/>
         </collection>
     </resultMap>
@@ -154,6 +155,7 @@
                 , tool_name
                 , upgrade
                 , before_tool_name
+                , before_tool_license
                 , upgrade_quantity
             )
         VALUES 
@@ -173,6 +175,7 @@
                 , #{item.toolName}
                 , #{item.upgrade}
                 , #{item.beforeToolName}
+                , #{item.beforeToolLicense}
                 , #{item.upgradeQuantity}
             )
         </foreach> 
@@ -235,16 +238,12 @@
             , tool_license
             , upgrade
             , before_tool_name
+            , before_tool_license
             , upgrade_quantity
         FROM
             estimate, estimate_detail
         WHERE
                 estimate.estimate_id = estimate_detail.estimate_id
             AND customer_id = #{customerId} 
-            AND (
-            <foreach item="item" collection="list" separator="OR" open="(" close=")">
-                tool_name LIKE CONCAT(#{item.toolName}, '%') AND tool_license = #{item.toolLicense}
-            </foreach>
-            )
     </select>
 </mapper>

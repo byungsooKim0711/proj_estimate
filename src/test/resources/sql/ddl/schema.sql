@@ -112,7 +112,8 @@ CREATE TABLE ESTIMATE_DETAIL
      TOOL_NAME            VARCHAR(100)    NULL, --        COMMENT  도구이름 , 
      TOOL_LICENSE         VARCHAR(45)     NULL, --        COMMENT  라이센스(단위) , 
      UPGRADE              CHAR(1)         NULL        DEFAULT 'X', -- COMMENT '업그레이드', 
-     BEFORE_TOOL_NAME     VARCHAR(100)    NULL        DEFAULT NULL, -- COMMENT '업그레이드 전 도구 이름', 
+     BEFORE_TOOL_NAME     VARCHAR(100)    NULL        DEFAULT NULL, -- COMMENT '업그레이드 전 도구 이름',
+     BEFORE_TOOL_LICENSE  VARCHAR(45)     NULL, --        COMMENT  업그레이드 전 도구 이름 
      UPGRADE_QUANTITY     INT             NULL        DEFAULT 0, -- COMMENT '업그레이드된 개수', 
     PRIMARY KEY (ESTIMATE_DETAIL_ID)
 );

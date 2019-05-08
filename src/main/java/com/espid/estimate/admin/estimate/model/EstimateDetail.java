@@ -49,6 +49,9 @@ public class EstimateDetail {
     /* 업그레이드 전 도구 이름 */
     private String beforeToolName;
 
+    /* 업그레이드 전 도구 라이센스 */
+    private String beforeToolLicense;
+
     /* 업그레이드된 개수 */
     private int upgradeQuantity;
 }
