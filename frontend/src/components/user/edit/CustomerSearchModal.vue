@@ -78,21 +78,12 @@ export default {
     methods: {
         searchCustomer: function() {
             if (this.search.length > 0) {
-
-                let tool = []
-
-                /*  */
-                if (this.selectedTools) {
-                    this.selectedTools.forEach(t => {
-                        tool.push({toolName: t.toolName.replace(" Maintenance", ""), toolLicense: t.toolLicense});
-                    });
-                }
-
-                axios.post('/api/customer', tool, {             
+                axios.get('/api/customer', {             
                     "params": {
                         search: this.search
                     }
                 }).then((response) => {
+                    console.log(response);
                     this.customers = response.data;
                 }).catch((error) => {
                     console.log(error);
