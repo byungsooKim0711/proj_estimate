@@ -8,7 +8,6 @@ import com.espid.estimate.user.model.EstimateModel;
 import com.espid.estimate.user.model.PriceModel;
 import com.espid.estimate.user.model.SenderModel;
 import com.espid.estimate.user.model.ToolModel;
-import com.espid.estimate.user.model.ToolNameAndLicense;
 import com.espid.estimate.user.model.VenderModel;
 
 import org.apache.ibatis.annotations.Mapper;

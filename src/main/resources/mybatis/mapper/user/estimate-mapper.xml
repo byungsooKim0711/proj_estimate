@@ -181,7 +181,7 @@
         </foreach> 
     </insert>
 
-    <select id="selectCustomers" resultType="com.espid.estimate.user.model.CustomerModel" parameterType="com.espid.estimate.user.model.ToolNameAndLicense">
+    <select id="selectCustomers" resultType="com.espid.estimate.user.model.CustomerModel">
         SELECT
               customer_id
             , customer_company
@@ -215,7 +215,7 @@
         )
     </insert>
     
-    <select id="selectEstimateByCustomerId" resultMap="estimateResultMap" parameterType="com.espid.estimate.user.model.ToolNameAndLicense">
+    <select id="selectEstimateByCustomerId" resultMap="estimateResultMap">
         SELECT
               estimate.estimate_id
             , title

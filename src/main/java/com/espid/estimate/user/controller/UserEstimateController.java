@@ -6,7 +6,6 @@ import com.espid.estimate.user.model.CustomerModel;
 import com.espid.estimate.user.model.EstimateWholeModel;
 import com.espid.estimate.user.model.SenderModel;
 import com.espid.estimate.user.model.ToolModel;
-import com.espid.estimate.user.model.ToolNameAndLicense;
 import com.espid.estimate.user.service.UserEstimateService;
 
 import org.springframework.beans.factory.annotation.Autowired;
